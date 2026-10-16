@@ -1,0 +1,52 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# local planning & notes
+IMPLEMENTATION_PLAN.md
+WHAT_TO_DO_FOR_THIS_HACKATHON.md
+devpost/
+.agents/
+.claude/
+agent/
+skills-lock.json
+.graphifyignore
+docs/idea.md
+docs/screenshots/
+docs/brand/banner.jpg
+docs/brand/logo.svg
+docs/brand/triage.png
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.db
+
+# node
+node_modules/
+dist/
+
+# knowledge graph build output
+graphify-out/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# areas officers set up at runtime live next to the shipped demo area
+data/areas/*
+!data/areas/niphad/
+
+# large raw downloads (rebuild with scripts/build_area.py); the small inputs stay in git
+data/areas/*/raw/s2/*.tif
+data/areas/*/raw/*.png
+data/areas/*/raw/*.npy
+data/areas/*/raw/ftw_*/inference_*
+data/areas/*/build.log
+data/areas/*/build.json
+data/skills/

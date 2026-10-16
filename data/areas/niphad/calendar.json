@@ -1,0 +1,34 @@
+{
+  "_note": "Management windows keyed to the canopy class inferred from a year of NDVI. The window dates are PLACEHOLDERS until confirmed with NRC Grapes / KVK Nashik or a local agronomist. The UI says 'assumed, unverified' wherever one is used. Dates are month-day and recur every year.",
+  "classes": {
+    "perennial": {
+      "windows": [
+        {
+          "id": "grape_fruit_pruning",
+          "label": "Grape fruit pruning",
+          "start": "10-01",
+          "end": "10-31",
+          "verified": false,
+          "source": "Placeholder. To be confirmed with NRC Grapes / KVK Nashik before any real use.",
+          "ask": "Ask the farmer: was fruit pruning done this week? One phone call settles it."
+        }
+      ]
+    },
+    "seasonal": {
+      "windows": [
+        {
+          "id": "kharif_harvest",
+          "label": "Kharif harvest season",
+          "start": "09-15",
+          "end": "11-15",
+          "verified": false,
+          "ask": "Ask the farmer: has the crop been harvested? One phone call settles it.",
+          "source": "Placeholder. Typical post-monsoon harvest period for Nashik; to be confirmed with a KVK or local agronomist."
+        }
+      ]
+    },
+    "unknown": {
+      "windows": []
+    }
+  }
+}

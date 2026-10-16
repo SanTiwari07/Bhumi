@@ -1,0 +1,17 @@
+{
+ "epsg": "EPSG:32643",
+ "x0": 402670,
+ "y_top": 2225100,
+ "nx": 959,
+ "ny": 904,
+ "cell_m": 10,
+ "bbox": [
+  74.07,
+  20.04,
+  74.16,
+  20.12
+ ],
+ "start": "2025-10-01",
+ "end": "2026-10-13",
+ "source": "Copernicus Sentinel-2 L2A (COPERNICUS/S2_SR_HARMONIZED) with Cloud Score+ via Google Earth Engine"
+}
