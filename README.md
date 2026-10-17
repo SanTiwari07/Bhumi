@@ -144,7 +144,7 @@ All of this lives in [`backend/app/blockchain.py`](backend/app/blockchain.py) an
 | **Season marker** (nullifier) | `SHA-256(location commitment + alert date)` | One fixed ID per field and satellite pass, so a registry can refuse a second claim: the double-counting guard carbon markets need. |
 | **Area root** | Merkle tree over every case root in the area | One value to anchor on-chain per pass. Each case gets an inclusion path to it. |
 
-**Anchoring.** With a browser wallet such as MetaMask, *Anchor area root* switches to Sepolia and sends a zero-value transaction that carries the area root in its calldata, then records the transaction hash. [`contracts/BhumiClimateRegistry.sol`](contracts/BhumiClimateRegistry.sol) adds a registry on top: `anchorAreaEpoch` stores an area root per pass, `attestFieldFinding` records a case root and marks its season marker as used, and `verifyCaseRoot` checks a case against what was stored.
+**Anchoring.** With a browser wallet such as MetaMask, *Anchor area root* switches to Sepolia and sends a zero-value transaction that carries the area root in its calldata, then records the transaction hash. [`contracts/BhumiClimateRegistry.sol`](contracts/BhumiClimateRegistry.sol) adds a registry on top: `anchorAreaEpoch` stores an area root per pass, `attestFieldFinding` records a case root and marks its season marker as used, rejecting a season marker that was already used (it reverts with `NullifierAlreadyUsed`), and `verifyCaseRoot` checks a case against what was stored.
 
 ## Why it matters for the climate
 
@@ -159,7 +159,7 @@ All of this lives in [`backend/app/blockchain.py`](backend/app/blockchain.py) an
 |---|---|
 | **Climate impact** | Real Sentinel-2 monitoring of 150 smallholder fields; earlier, targeted action on crop stress; trusted records for carbon and water programmes. |
 | **Innovation and creativity** | Differential diagnosis on satellite alerts, a computed next best check, and a Merkle-sealed evidence trail where a field visit visibly changes the root. |
-| **Technical execution** | FastAPI and React app on real data, 7 evidence tools, an 11-cause rule engine, SHA-256 Merkle proofs with in-app verification, Sepolia anchoring, a Solidity registry, and 70 passing tests. |
+| **Technical execution** | FastAPI and React app on real data, 7 evidence tools, an 11-cause rule engine, SHA-256 Merkle proofs with in-app verification, Sepolia anchoring, a Solidity registry, 70 passing backend tests and 2 contract tests. |
 | **Practical usefulness** | Works on a phone, needs no API key, explains every dismissal, and uses only free global data, so a farmer producer organisation could run it tomorrow. |
 | **Presentation** | The screens above walk from problem to proof; the Proof tab and Ledger let a judge verify a case in one click. |
 
@@ -182,6 +182,12 @@ python -m uvicorn app.main:app --app-dir backend --port 8000
 # 3. Frontend, in a second terminal: dev server on http://localhost:5173
 npm --prefix frontend install
 npm --prefix frontend run dev
+```
+
+```bash
+# 4. Optional: compile the contract and test it in an in-memory EVM (nothing is deployed)
+npm --prefix contracts install
+npm --prefix contracts test
 ```
 
 Open the app and choose **Try the Niphad demo**. For a single server, run `npm --prefix frontend run build` and open http://127.0.0.1:8000.
@@ -215,7 +221,7 @@ Every setting is optional; copy [`.env.example`](.env.example) to `.env` to set 
 backend/app/tools/      seven evidence tools (pixels and weather to evidence)
 backend/app/engine/     rule table and three-stage scoring
 backend/app/blockchain.py  leaves, Merkle trees, commitments, verification
-contracts/              BhumiClimateRegistry.sol
+contracts/              BhumiClimateRegistry.sol and its in-memory EVM tests
 data/areas/niphad/      the shipped demo area: fields, scenes, weather, cases
 frontend/src/           React, TypeScript, Leaflet
 docs/screens/           the screenshots in this README
@@ -223,8 +229,7 @@ docs/screens/           the screenshots in this README
 
 ## Honest limits
 
-- **The contract is written but not yet deployed.** Anchoring today puts the area root into a Sepolia transaction's calldata; it does not call the contract. Set `BHUMI_SEPOLIA_CONTRACT` once you deploy it.
-- **The contract records season markers but does not yet refuse a reused one.** Adding that `require` is a one-line change and the next step for on-chain double-counting protection.
+- **The contract is written but not yet deployed.** Anchoring today puts the area root into a Sepolia transaction's calldata; it does not call the contract. Set `BHUMI_SEPOLIA_CONTRACT` once you deploy it. Compile it with `viaIR` and the optimizer on, as the contract tests do; the legacy pipeline stops with stack-too-deep.
 - **Without a wallet, anchoring is simulated.** The app says so and records the result locally. Only anchors made with a wallet exist on Sepolia.
 - **The location commitment is coarse, not secret.** It hides a field's exact boundary, but someone who can guess the field ID and the 100 m cell can recompute it. A salted or zero-knowledge commitment is the next step.
 - **10 m pixels have limits.** Bhumi sees patterns across a field, not individual plants, and says so on the evidence it shows.

@@ -52,6 +52,9 @@ contract BhumiClimateRegistry {
     /// @notice Anti-double-counting nullifier registry [IEEE-2]
     mapping(bytes32 => bool) public nullifierUsed;
 
+    /// @notice Raised when a season marker (epoch nullifier) has already been attested [IEEE-2]
+    error NullifierAlreadyUsed(bytes32 epochNullifier);
+
     event AreaEpochAnchored(
         uint256 indexed epochIndex,
         string areaId,
@@ -124,6 +127,7 @@ contract BhumiClimateRegistry {
      * @param epochNullifier Anti-double-counting nullifier for (parcelCommitment, alertDate) [IEEE-2]
      * @param checkId Ground-truth check identifier (or "satellite_triage" for initial pass)
      * @param outcome Diagnostic or ground-truth outcome key
+     * @dev Reverts with NullifierAlreadyUsed if epochNullifier was attested before.
      */
     function attestFieldFinding(
         string calldata areaId,
@@ -135,6 +139,8 @@ contract BhumiClimateRegistry {
         string calldata checkId,
         string calldata outcome
     ) external {
+        if (nullifierUsed[epochNullifier]) revert NullifierAlreadyUsed(epochNullifier);
+
         bytes32 caseKey = keccak256(abi.encodePacked(areaId, ":", caseId));
         nullifierUsed[epochNullifier] = true;
 
