@@ -85,7 +85,7 @@ export default function Case() {
   const epochNullifier = proof?.epoch_nullifier ?? "";
 
   return (
-    <main className="case-page">
+    <main className="case-shell">
       {/* Top Parcel Identification & Action Bar */}
       <header className="case-bar">
         <div className="case-bar-left">
@@ -146,7 +146,7 @@ export default function Case() {
         <div className="cpb-right">
           <button
             type="button"
-            className={`cpb-btn ${verifyRes?.verified ? "is-verified" : ""}`}
+            className={`cpb-btn ${verifyRes?.verified ? "verified" : ""}`}
             onClick={handleVerify}
             disabled={verifying}
           >
@@ -180,7 +180,7 @@ export default function Case() {
       {/* Mirrored Split Studio: Left Dossier Panel + Right Sticky Multi-Spectral Map Deck */}
       <div className="workspace">
         <aside className="panel" aria-label="Ecological diagnostic dossier">
-          <nav className="panel-tabs" role="tablist" aria-label="Case dossier sections">
+          <nav className="tabs" role="tablist" aria-label="Case dossier sections">
             <button
               type="button"
               role="tab"
@@ -258,7 +258,7 @@ export default function Case() {
 
             {tab === "dmrv" && (
               <section className="rail-section" aria-label="Cryptographic dMRV proof breakdown">
-                <div className="section-head">
+                <div>
                   <h2>Cryptographic dMRV Proof &amp; Merkle Tree</h2>
                   <p className="section-sub">
                     Every telemetry step in {r.field.name} is canonically serialized and hashed with domain-separated SHA-256 (`bhumi:leaf:v1`) for Ethereum Sepolia verification.
@@ -338,18 +338,21 @@ export default function Case() {
         </aside>
 
         <section className="stage" aria-label="Sentinel-2 multi-spectral inspection deck">
-          {map && series ? (
-            <MapWorkspace
-              caseId={r.case_id}
-              map={map}
-              series={series}
-              headlineDate={r.headline?.date ?? null}
-            />
-          ) : (
-            <div className="center-spin">
-              <Layers size={18} aria-hidden /> <Spinner size={20} />
-            </div>
-          )}
+          <div className="stage-map">
+            {map && series ? (
+              <MapWorkspace
+                caseId={r.case_id}
+                map={map}
+                series={series}
+                headlineDate={r.headline?.date ?? null}
+              />
+            ) : (
+              <div className="stage-loading">
+                <Spinner size={20} />
+                <span><Layers size={14} aria-hidden /> Loading Sentinel-2 scenes…</span>
+              </div>
+            )}
+          </div>
         </section>
       </div>
 

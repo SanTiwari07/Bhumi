@@ -98,16 +98,16 @@ export default function Inbox() {
 
   return (
     <main className="page">
-      <header className="inbox-top">
+      <header className="page-head">
         <div>
           <p className="eyebrow">
             {data.area} · As of {fmtDate(data.as_of)} · Cryptographic dMRV Triage
           </p>
           <h1>Field Alert &amp; dMRV Attestation Queue</h1>
-          <p className="home-sub">{data.banner}</p>
+          <p className="lede">{data.banner}</p>
         </div>
 
-        <div className="inbox-controls">
+        <div className="home-head-actions">
           <div className="seg" role="group" aria-label="View mode">
             <button
               type="button"
@@ -132,48 +132,49 @@ export default function Inbox() {
         </div>
       </header>
 
-      <div className="filter-pills" role="toolbar" aria-label="Filter cases by outcome">
-        <span className="filter-label">
-          <Filter size={13} aria-hidden /> Filter:
-        </span>
-        {FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            className={`filter-pill ${filter === f.key ? "on" : ""}`}
-            aria-pressed={filter === f.key}
-            onClick={() => setParam("filter", f.key)}
-          >
-            {f.dot && <i className={f.dot} aria-hidden />}
-            <span>{f.label}</span>
-            <b>{f.count}</b>
-          </button>
-        ))}
+      <div className="inbox-controls">
+        <div className="inbox-filter-bar" role="toolbar" aria-label="Filter cases by outcome">
+          <Filter size={14} className="muted" aria-hidden />
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              type="button"
+              className={`filter-pill ${filter === f.key ? "on" : ""}`}
+              aria-pressed={filter === f.key}
+              onClick={() => setParam("filter", f.key)}
+            >
+              {f.label} <span>{f.count}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {view === "map" ? (
-        <section aria-label="Basin parcel map">
+        <section className="fieldsmap-wrap" aria-label="Basin parcel map">
           <FieldsMap />
         </section>
+      ) : rows.length === 0 ? (
+        <p className="empty"><CheckCircle2 size={16} aria-hidden /> No cases match this filter.</p>
       ) : (
-        <section className="inbox-table" aria-label="Prioritized parcel cases">
+        <section className="inbox" aria-label="Prioritized parcel cases">
+          <div className="table-scroll">
           <div className="inbox-head" aria-hidden>
             <span className="c-sev">Severity</span>
             <span className="c-field">Parcel</span>
-            <span className="c-what">Canopy / Moisture Signal</span>
-            <span className="c-lead">Leading Ecological Cause</span>
-            <span className="c-proof">SHA-256 Merkle Proof</span>
+            <span className="c-change">Canopy signal</span>
+            <span className="c-lead">Leading cause</span>
+            <span className="c-proof">Merkle proof</span>
             <span className="c-status">Outcome</span>
           </div>
 
-          <ul className="inbox-list">
+          <ul className="rows">
             {rows.map((r) => {
               const muted = r.outcome === "auto_dismissed";
               return (
                 <li key={r.id}>
                   <Link
                     to={`/case/${r.id}`}
-                    className={`inbox-row ${muted ? "is-muted" : ""}`}
+                    className={`inbox-row ${muted ? "is-dismissed" : ""} ${r.outcome === "resolved" ? "is-resolved" : ""}`}
                   >
                     <span className="c-sev">
                       <SeverityBadge level={r.severity} />
@@ -183,8 +184,8 @@ export default function Inbox() {
                       <strong>
                         {r.field.name}
                         {r.updated && (
-                          <span className="upd-tag" title="Updated with field officer ground finding">
-                            <CheckCircle2 size={12} aria-hidden /> Ground-attested
+                          <span className="tag-updated" title="Updated with field officer ground finding">
+                            Ground-attested
                           </span>
                         )}
                       </strong>
@@ -193,28 +194,26 @@ export default function Inbox() {
                       </small>
                     </span>
 
-                    <span className="c-what">
+                    <span className="c-change">
                       {r.headline ? (
                         <>
-                          <strong>{plainDrop(r.headline.delta, r.headline.zone_label)}</strong>
+                          <span className="num">{plainDrop(r.headline.delta, r.headline.zone_label)}</span>
                           <small>{fmtDate(r.headline.date)}</small>
                         </>
                       ) : (
-                        <span className="muted">{r.reason}</span>
+                        <small>No headline drop</small>
                       )}
                     </span>
 
                     <span className="c-lead">
-                      <div className="lead-top">
-                        <strong>{r.leading}</strong>
-                        {r.confidence && <ConfidenceMeter level={r.confidence} />}
-                      </div>
-                      <small className="muted">{r.reason}</small>
+                      <span className="lead-name">{r.leading}</span>
+                      {r.confidence && <ConfidenceMeter level={r.confidence} />}
+                      {r.reason && r.reason !== r.leading && <small>{r.reason}</small>}
                     </span>
 
                     <span className="c-proof">
                       <code
-                        className="hash-pill"
+                        className="proof-pill"
                         title={
                           r.evidence_root
                             ? `SHA-256 Evidence Merkle Root: ${r.evidence_root}\nParcel Commitment [IEEE-1]: ${r.parcel_commitment ?? ""}`
@@ -236,6 +235,7 @@ export default function Inbox() {
               );
             })}
           </ul>
+          </div>
         </section>
       )}
 

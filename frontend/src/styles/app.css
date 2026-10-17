@@ -272,12 +272,23 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
   color: rgba(216, 243, 220, 0.65);
 }
 
+.obs-user-btn > svg { flex: none; color: rgba(216, 243, 220, 0.65); }
+
 .obs-main {
   min-width: 0;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
+
+/* keyboard-only shortcut past the sidebar */
+.skip {
+  position: absolute; left: 12px; top: -48px; z-index: 2000;
+  padding: 8px 14px; border-radius: var(--r-sm);
+  background: var(--ink); color: var(--on-ink); font-size: 13px; font-weight: 600;
+  transition: top var(--fast) var(--ease);
+}
+.skip:focus { top: 12px; }
 
 .page {
   max-width: 1320px;
@@ -330,6 +341,54 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
   color: var(--brand);
   flex: none;
 }
+
+.status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  color: var(--text-2);
+}
+.sev.sev-none { display: inline-block; min-width: 20px; text-align: center; background: none; border: 0; }
+
+/* inline hash chip used in tables and cards */
+.hash-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 7px; border-radius: var(--r-sm);
+  background: var(--brand-wash); border: 1px solid var(--sev-low-border);
+  color: var(--ink); font-family: var(--mono); font-size: 11px; font-weight: 600;
+  white-space: nowrap;
+}
+
+/* confidence: three rising bars and a word */
+.conf { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.conf-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.conf-bars span { width: 4px; border-radius: 1px; background: var(--border-strong); }
+.conf-bars span:nth-child(1) { height: 5px; }
+.conf-bars span:nth-child(2) { height: 8px; }
+.conf-bars span:nth-child(3) { height: 12px; }
+.conf-bars span.on { background: var(--ink); }
+.conf-word { font-size: 12px; font-weight: 600; color: var(--text-2); }
+
+/* evidence references: E1, E2 … */
+.refs { display: inline-flex; flex-wrap: wrap; gap: 3px; vertical-align: baseline; }
+.ev-ref {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; line-height: 1.5;
+  padding: 0 5px; border-radius: 3px;
+  background: var(--brand-wash); color: var(--ink); border: 1px solid var(--border);
+}
+.ev-ref:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* scene quality */
+.q { padding: 1px 7px; font-size: 11px; }
+.q-usable  { color: var(--q-usable);  background: var(--sev-low-soft);    border-color: var(--sev-low-border); }
+.q-partial { color: var(--q-partial); background: var(--sev-medium-soft); border-color: var(--sev-medium-border); }
+.q-cloudy, .q-none { color: var(--q-cloudy); background: var(--canvas-sunken); border-color: var(--border); }
+
+.limits-note {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 10px 12px; border-radius: var(--r-sm);
+  background: var(--canvas-sunken); font-size: 12.5px; color: var(--text-2);
+}
+.limits-note svg { flex: none; margin-top: 2px; color: var(--text-3); }
 
 /* ---------- Buttons ---------- */
 .btn {
@@ -488,7 +547,7 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
 .section-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
 
 .steps {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  display: flex; flex-direction: column; gap: 10px;
   margin-bottom: 12px;
 }
 .step {
@@ -825,6 +884,8 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
   .obs-user-meta {
     display: none;
   }
+  .obs-user-btn { width: auto; }
+  .menu-pop { top: calc(100% + 8px); bottom: auto; left: auto; right: 0; }
 }
 
 @media (max-width: 760px) {
@@ -834,13 +895,21 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
   .steps { grid-template-columns: 1fr 1fr; }
   .inbox-head { display: none; }
   .inbox-row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "field status"
-      "lead  change"
-      "proof proof";
+      "field  status"
+      "lead   lead"
+      "change change"
+      "proof  proof";
     gap: 6px 12px;
   }
+  .inbox-row .c-change { text-align: left; }
+  .inbox-row .c-proof { align-items: flex-start; }
+  .obs-sidebar { padding: 10px 16px 8px; gap: 8px 12px; }
+  .obs-nav { order: 3; flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
+  .obs-nav::-webkit-scrollbar { display: none; }
+  .obs-nav a { white-space: nowrap; flex: none; }
+  .obs-footer { margin-left: auto; }
   .inbox-row .c-sev    { display: none; }
   .inbox-row .c-field  { grid-area: field; }
   .inbox-row .c-status { grid-area: status; }

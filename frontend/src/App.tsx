@@ -1,6 +1,6 @@
 import { lazy, ReactNode, Suspense, useEffect, useRef, useState } from "react";
 import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, Compass, Layers, LogOut, MapPin, MapPinned, RotateCcw, ShieldCheck } from "lucide-react";
+import { ChevronUp, Compass, Layers, LogOut, MapPin, MapPinned, RotateCcw, ShieldCheck } from "lucide-react";
 import { api } from "./api";
 import { useSession } from "./session";
 import SignIn from "./pages/SignIn";
@@ -53,10 +53,13 @@ function OfficerMenu() {
 
   return (
     <div className="menu" ref={box}>
-      <button type="button" className="menu-btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+      <button type="button" className="obs-user-btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span className="avatar" aria-hidden>{me.officer.name.slice(0, 1).toUpperCase()}</span>
-        <span className="menu-name">{me.officer.name}</span>
-        <ChevronDown size={14} aria-hidden />
+        <span className="obs-user-meta">
+          <strong>{me.officer.name}</strong>
+          <small>@{me.officer.username}</small>
+        </span>
+        <ChevronUp size={14} aria-hidden />
       </button>
       {open && (
         <div className="menu-pop" role="menu">
@@ -77,18 +80,27 @@ function LeftRail() {
   const area = me?.area;
   const ready = area?.status === "ready";
   return (
-    <aside className="appbar" aria-label="Bhumi Ecological Observatory navigation">
-      <div className="appbar-inner">
-        <Link to={me ? "/" : "/signin"} className="wordmark" aria-label="Bhumi home">
-          <Mark size={28} />
-          <span className="wordmark-text">
-            <strong>Bhumi</strong>
-            <small>भूमि · dMRV Observatory</small>
-          </span>
-        </Link>
+    <aside className="obs-sidebar" aria-label="Bhumi Ecological Observatory navigation">
+      <Link to={me ? "/" : "/signin"} className="obs-brand" aria-label="Bhumi home">
+        <Mark size={28} />
+        <span className="obs-brand-text">
+          <span className="obs-brand-title">Bhumi <span className="obs-brand-deva">भूमि</span></span>
+          <span className="obs-brand-sub">dMRV Observatory</span>
+        </span>
+      </Link>
 
-        {ready && (
-          <nav className="appnav" aria-label="Main">
+      <div className="obs-chain-pill" title="Ethereum Sepolia Testnet (Chain ID 11155111) · SHA-256 Merkle dMRV">
+        <span className="obs-chain-dot" aria-hidden />
+        <span className="obs-chain-info">
+          <strong>Sepolia · 11155111</strong>
+          <small>SHA-256 Merkle dMRV</small>
+        </span>
+      </div>
+
+      {ready && (
+        <>
+          <p className="obs-nav-label">Navigate</p>
+          <nav className="obs-nav" aria-label="Main">
             <NavLink to="/" end>
               <Compass size={16} aria-hidden />
               <span>Observatory</span>
@@ -102,27 +114,18 @@ function LeftRail() {
               <span>dMRV Ledger</span>
             </NavLink>
           </nav>
-        )}
+        </>
+      )}
 
-        <span className="appbar-spacer" />
-
-        <div className="rail-sepolia" title="Ethereum Sepolia Testnet (Chain ID 11155111) · SHA-256 Merkle dMRV">
-          <span className="rail-sepolia-dot" aria-hidden />
-          <div>
-            <strong>Sepolia · 11155111</strong>
-            <small>SHA-256 Merkle dMRV</small>
-          </div>
+      {area && (
+        <div className="obs-region-card" title={area.region}>
+          <span className="obs-region-head"><MapPin size={12} aria-hidden /> Monitored region</span>
+          <strong>{area.name}</strong>
+          <small>{ready && area.fields ? `${area.fields} parcels watched` : ready ? area.region : "Setting up…"}</small>
         </div>
+      )}
 
-        {area && (
-          <span className="area-chip" title={area.region}>
-            <MapPin size={13} aria-hidden />
-            <span>
-              <strong>{area.name}</strong>
-              {ready && area.fields ? <small>{area.fields} parcels watched</small> : <small>{area.status === "ready" ? "" : "setting up"}</small>}
-            </span>
-          </span>
-        )}
+      <div className="obs-footer">
         <OfficerMenu />
       </div>
     </aside>
@@ -151,10 +154,10 @@ export default function App() {
   const loc = useLocation();
   const isSignIn = loc.pathname === "/signin";
   return (
-    <div className={isSignIn ? "shell-gate" : "app-shell"}>
+    <div className={isSignIn ? "shell-gate" : "obs-layout"}>
       <a href="#main" className="skip">Skip to content</a>
       <LeftRail />
-      <div id="main" className="app-main">
+      <div id="main" className="obs-main">
         <Routes>
           <Route path="/signin" element={<SignInRoute />} />
           <Route path="/setup" element={<Gate need="session"><Setup /></Gate>} />

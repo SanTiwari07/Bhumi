@@ -266,10 +266,11 @@ export default function Ledger() {
     <main className="page ledger-page">
       {/* Dark Forest Hero Banner */}
       <section className="ledger-hero" aria-label="Ethereum Sepolia dMRV Ledger">
+        <div>
         <div className="ledger-hero-kicker">
           <ShieldCheck size={15} aria-hidden />
           <span>
-            {ledger.network.name} · chainId: {ledger.network.chain_id} ({ledger.network.chain_hex}) · BhumiClimateRegistry.sol
+            {ledger.network.name} · chainId {ledger.network.chain_id} ({ledger.network.chain_hex}) · BhumiClimateRegistry.sol
           </span>
         </div>
         <h1>Cryptographic Climate dMRV &amp; Merkle Proof Ledger</h1>
@@ -280,7 +281,7 @@ export default function Ledger() {
         <div className="ledger-actions-row">
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-inverse"
             onClick={handleVerifySelected}
             disabled={verifying}
           >
@@ -309,6 +310,7 @@ export default function Ledger() {
           >
             <Download size={15} aria-hidden /> Export Verifiable JSON Proof Bundle
           </button>
+        </div>
         </div>
 
         <div className="ledger-hero-hashes">
@@ -356,7 +358,7 @@ export default function Ledger() {
                   type="button"
                   role="option"
                   aria-selected={active}
-                  className={`leaf-btn ${active ? "active" : ""}`}
+                  className={`leaf-btn ${active ? "on" : ""}`}
                   onClick={() => handleSelectCase(entry.case_id)}
                 >
                   <div className="leaf-btn-top">
