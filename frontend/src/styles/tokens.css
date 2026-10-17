@@ -1,0 +1,74 @@
+:root {
+  /* Bhumi · Botanical Greenery & Earth Stewardship Palette */
+  --canvas:          #FAFCF8;
+  --canvas-subtle:   #F3F7F0;
+  --canvas-sunken:   #E6EFE2;
+  --border:          #CFDFC8;
+  --border-subtle:   #E2ECE0;
+  --border-strong:   #B2CBB0;
+
+  /* Text: deep botanical forest ink */
+  --text:            #0D2118;
+  --text-2:          #2D4A3B;
+  --text-3:          #526E5F;
+  --text-disabled:   #7A9486;
+
+  /* Canopy & Chlorophyll Brand */
+  --canopy-dark:     #112A1E;
+  --ink:             #1B4332;
+  --ink-hover:       #2D6A4F;
+  --on-ink:          #F4FAF6;
+  --brand:           #2D6A4F;
+  --brand-bright:    #40916C;
+  --brand-leaf:      #52B788;
+  --brand-wash:      #D8F3DC;
+  --turmeric:        #BC6C25;
+  --turmeric-soft:   #FDF0E2;
+  --turmeric-ink:    #7C3F0E;
+  --focus:           #40916C;
+
+  /* Severity & Ecological Alert Semantics */
+  --sev-high:        #B91C1C;
+  --sev-high-soft:   #FEF2F2;
+  --sev-high-border: #FECACA;
+
+  --sev-medium:      #B45309;
+  --sev-medium-soft: #FFFBEB;
+  --sev-medium-border:#FDE68A;
+
+  --sev-low:         #1B4332;
+  --sev-low-soft:    #E6F4EA;
+  --sev-low-border:  #B7E4C7;
+
+  /* Area-wide signal: monsoon slate-teal */
+  --area:            #1E607A;
+  --area-soft:       #E6F3F8;
+  --area-border:     #B3D9E8;
+
+  /* Evidence polarity */
+  --ev-for:          #2D6A4F;
+  --ev-against:      #526358;
+  --ev-context:      #6B7F73;
+
+  /* Scene quality */
+  --q-usable:        #2D6A4F;
+  --q-partial:       #B45309;
+  --q-cloudy:        #7A9486;
+
+  /* Typography */
+  --display: "Fraunces", Georgia, serif;
+  --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Radii & Elevation */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --raised:  0 2px 6px rgba(17, 42, 30, 0.06), 0 1px 2px rgba(17, 42, 30, 0.04);
+  --overlay: 0 14px 34px rgba(17, 42, 30, 0.14), 0 3px 10px rgba(17, 42, 30, 0.08);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 140ms;
+  --base: 220ms;
+}
