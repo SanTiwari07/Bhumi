@@ -48,9 +48,9 @@ IEEE_REFERENCES = [
     {
         "id": "IEEE-3",
         "authors": "S. Akleylek and K. Seyhan",
-        "title": "A Provably Secure GISIS-Based Modified AKE Scheme with Reusable Keys",
-        "venue": "IEEE Access, vol. 8, pp. 26210–26222, 2020",
-        "doi": "10.1109/ACCESS.2020.2971358",
+        "title": "A Probably Secure Bi-GISIS Based Modified AKE Scheme With Reusable Keys",
+        "venue": "IEEE Access, vol. 8, 2020",
+        "doi": "10.1109/ACCESS.2020.2970537",
         "primitive": "Authenticated Ground-Truth Verifier Session Signing",
     },
 ]

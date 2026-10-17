@@ -280,7 +280,7 @@ export default function Ledger() {
                   onClick={() => handleSelectCase(entry.case_id)}
                 >
                   <span className="leaf-btn-top">
-                    <strong>{entry.field_name}</strong>
+                    <span className="fid" aria-label={entry.field_name}>{entry.field_id}</span>
                     <SeverityBadge level={entry.severity} />
                   </span>
                   <span className="leaf-btn-meta">

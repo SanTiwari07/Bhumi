@@ -149,10 +149,10 @@ export default function Inbox() {
               <li key={r.id}>
                 <Link
                   to={`/case/${r.id}`}
-                  className={`ct-row ${r.outcome === "auto_dismissed" ? "is-quiet" : ""}`}
+                  className={`ct-row edge-${r.severity ?? "none"} ${r.outcome === "auto_dismissed" ? "is-quiet" : ""}`}
                 >
                   <span className="ct-field">
-                    <strong>{r.field.name}</strong>
+                    <span className="fid" aria-label={r.field.name}>{r.field.id}</span>
                     <small>{r.field.area_ha} ha, {r.field.class_label.toLowerCase()}</small>
                   </span>
                   <span className="ct-change">

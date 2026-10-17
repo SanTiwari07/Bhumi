@@ -119,7 +119,7 @@
 .legend-ends { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-2); margin-top: 3px; }
 .legend-bins { display: flex; flex-direction: column; gap: 4px; }
 .legend-bins li { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.legend-bins i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(17, 42, 30, 0.14); flex: none; }
+.legend-bins i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(20, 27, 45, 0.14); flex: none; }
 .legend-bins i.hatch { background: repeating-linear-gradient(45deg, #e5e7eb 0 3px, #9aa0a6 3px 5px); }
 .legend-bins small { margin-left: auto; color: var(--text-3); font-size: 11px; }
 .legend-sum { font-size: 12px; color: var(--text); line-height: 1.4; }
@@ -192,7 +192,7 @@
 /* ---------- dock: Botanical Canopy Action Slip ---------- */
 .dock { flex: none; padding: 16px 20px; border-top: 1px solid var(--border); }
 .dock-slip { background: var(--canvas); color: var(--text); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -1px 0 var(--border), 0 -8px 20px rgba(29, 37, 34, 0.05); }
-.dock-kicker { font-size: 13px; font-weight: 650; color: var(--ink); }
+.dock-kicker { font-size: 13px; font-weight: 600; color: var(--ink); }
 .dock-instruction { font-size: 16.5px; line-height: 1.35; font-weight: 600; letter-spacing: -0.011em; }
 .dock-results { display: flex; flex-direction: column; gap: 6px; }
 .dock-results li { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; padding: 8px 10px; background: var(--canvas-subtle); border-radius: var(--r-sm); font-size: 13px; line-height: 1.4; color: var(--text-2); }
@@ -213,7 +213,7 @@
 
 /* record finding sheet */
 dialog.sheet { border: 0; padding: 0; border-radius: var(--r-lg); width: min(520px, calc(100% - 32px)); max-height: calc(100dvh - 48px); box-shadow: var(--overlay); background: var(--canvas); color: var(--text); }
-dialog.sheet::backdrop { background: rgba(17, 42, 30, 0.55); }
+dialog.sheet::backdrop { background: rgba(20, 27, 45, 0.55); }
 .sheet-inner { position: relative; }
 .sheet .close-form { border: 0; border-radius: 0; padding: 24px; }
 .sheet-x { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; display: grid; place-items: center; border: 0; background: none; border-radius: 50%; color: var(--text-2); }
@@ -233,7 +233,7 @@ dialog.sheet::backdrop { background: rgba(17, 42, 30, 0.55); }
   .panel { order: 1; border-right: 0; border-top: 1px solid var(--border); }
   .panel-body { overflow: visible; padding: 16px 16px 24px; }
   .tabs { position: sticky; top: 52px; z-index: 1000; }
-  .dock { position: sticky; bottom: 0; z-index: 1000; box-shadow: 0 -6px 18px rgba(17, 42, 30, 0.14); }
+  .dock { position: sticky; bottom: 0; z-index: 1000; box-shadow: 0 -6px 18px rgba(20, 27, 45, 0.14); }
   .dock-slip .dock-results, .dock-slip .dock-cost, .dock-slip .dock-ask { display: none; }
   .dock-instruction { font-size: 16px; }
   .ws-legend { right: 12px; left: auto; bottom: 74px; width: 232px; }
@@ -308,7 +308,7 @@ dialog.sheet::backdrop { background: rgba(17, 42, 30, 0.55); }
   .fm-actions { margin-left: 0; }
 }
 .about { margin-top: 40px; padding: 20px 24px; background: var(--canvas); border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: var(--raised); }
-.about h2 { font-size: 15px; font-weight: 650; color: var(--ink); }
+.about h2 { font-size: 15px; font-weight: 600; color: var(--ink); }
 .about dl { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px 28px; }
 .about dt { font-size: 12px; font-weight: 700; color: var(--brand); }
 .about dd { font-size: 13px; line-height: 1.5; margin-top: 2px; color: var(--text-2); }
@@ -423,7 +423,7 @@ dialog.sheet::backdrop { background: rgba(17, 42, 30, 0.55); }
 .casefile details { margin-top: 10px; }
 .casefile summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--brand); }
 .casefile-more { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; color: var(--text-2); }
-.casefile-more h4 { font-size: 13px; font-weight: 650; color: var(--text); margin: 0 0 4px; }
+.casefile-more h4 { font-size: 13px; font-weight: 600; color: var(--text); margin: 0 0 4px; }
 .casefile-more ul { display: flex; flex-direction: column; gap: 4px; padding-left: 16px; list-style: disc; }
 
 .hyp-list { display: flex; flex-direction: column; gap: 10px; }
@@ -433,7 +433,7 @@ dialog.sheet::backdrop { background: rgba(17, 42, 30, 0.55); }
 .hyp-lead { background: var(--canvas); border-color: var(--ink); border-width: 1.5px; }
 .hyp-lead .hyp-rank { background: var(--ink); color: #fff; }
 .dx-group { margin-top: 10px; }
-.dx-label { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 650; }
+.dx-label { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; }
 .dx-for .dx-label { color: var(--ev-for); }
 .dx-against .dx-label { color: var(--ev-against); }
 .dx-unknown .dx-label { color: var(--text-3); }

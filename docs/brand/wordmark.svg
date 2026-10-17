@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" fill="none">
-  <rect x="4" y="8" width="56" height="56" rx="14" fill="#1B4332"/>
-  <path d="M12 48C21 41 29 40 37 44C44 47.5 49.5 46.5 56 41.5" stroke="#74C69D" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M12 55C22 49.5 31 49.5 40 53C46 55.2 51 54.2 56 51" stroke="#BC6C25" stroke-width="3.2" stroke-linecap="round"/>
-  <path d="M32 17C39.5 17 45 23.2 45 30.8C45 38.4 37.6 43 32 43C26.4 43 19 38.4 19 30.8C19 23.2 24.5 17 32 17Z" fill="#2D6A4F" stroke="#B7E4C7" stroke-width="3"/>
-  <path d="M32 22V39" stroke="#B7E4C7" stroke-width="2.6" stroke-linecap="round"/>
-  <circle cx="46" cy="22" r="4.2" fill="#DDA15E" stroke="#1B4332" stroke-width="2"/>
-  <text x="76" y="42" fill="#112A1E" font-family="Fraunces, Georgia, serif" font-size="30" font-weight="600">Bhumi</text>
-  <text x="174" y="41" fill="#2D6A4F" font-family="Plus Jakarta Sans, sans-serif" font-size="22" font-weight="600">भूमि</text>
-  <text x="76" y="59" fill="#526A5B" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.08em">CLIMATE dMRV &amp; ECOLOGICAL STEWARDSHIP · SEPOLIA 11155111</text>
+  <rect x="4" y="4" width="64" height="64" rx="14" fill="#2E5296"/>
+  <path d="M14 31C23 22 36 19 58 21" stroke="#C9D6EE" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M14 43C24 34 38 31 58 33" stroke="#E6ECF7" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M14 55C25 46 40 43 58 45" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round"/>
+  <circle cx="45" cy="49.2" r="6.8" fill="#E3A008" stroke="#2E5296" stroke-width="2.8"/>
+  <text x="86" y="44" font-family="'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="600" fill="#1E3A6E">Bhumi</text>
+  <text x="196" y="44" font-family="'Noto Sans Devanagari', 'Nirmala UI', 'Mangal', sans-serif" font-size="26" font-weight="500" fill="#C88A00">भूमि</text>
+  <text x="87" y="63" font-family="'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#5D667C">Crop health and verifiable field records</text>
 </svg>

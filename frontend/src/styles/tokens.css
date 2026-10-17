@@ -1,71 +1,75 @@
 :root {
-  /* Bhumi · daylight field desk: cool field-paper, white sheets, one field green */
+  /* Bhumi · survey register: cyanotype survey blue on cool paper, marigold for the seal */
   --canvas:          #FFFFFF;
-  --canvas-subtle:   #F4F5F1;
-  --canvas-sunken:   #ECEEE8;
-  --border:          #DDE1DA;
-  --border-subtle:   #E9ECE6;
-  --border-strong:   #C3C9C0;
+  --canvas-subtle:   #F6F7F9;
+  --canvas-sunken:   #EDEFF3;
+  --border:          #E1E4EB;
+  --border-subtle:   #ECEEF2;
+  --border-strong:   #C5CAD6;
 
-  /* Text */
-  --text:            #1D2522;
-  --text-2:          #3F4A45;
-  --text-3:          #5E6A64;
-  --text-disabled:   #949D98;
+  /* Text: blue-black survey ink */
+  --text:            #141B2D;
+  --text-2:          #39425A;
+  --text-3:          #5D667C;
+  --text-disabled:   #9AA1B2;
 
-  /* Brand: one field green, used for actions and healthy canopy */
-  --canopy-dark:     #1D2522;
-  --ink:             #2F6B4A;
-  --ink-hover:       #255A3D;
+  /* Brand: survey blue for structure and actions, marigold for the seal */
+  --rail:            #172E58;
+  --rail-2:          #22407A;
+  --canopy-dark:     #172E58;
+  --ink:             #1E3A6E;
+  --ink-hover:       #172E58;
   --on-ink:          #FFFFFF;
-  --brand:           #2F6B4A;
-  --brand-bright:    #3C8459;
-  --brand-leaf:      #6FAF84;
-  --brand-wash:      #EAF3EC;
+  --brand:           #1E3A6E;
+  --brand-bright:    #2E5296;
+  --brand-leaf:      #3F8A5A;
+  --brand-wash:      #EAF0F9;
+  --seal:            #E3A008;
+  --seal-soft:       #FDF5DD;
   --turmeric:        #B7791F;
-  --turmeric-soft:   #FBF4E6;
+  --turmeric-soft:   #FBF3E4;
   --turmeric-ink:    #7A4E0E;
-  --focus:           #2F6B4A;
+  --focus:           #2E5296;
 
   /* Severity */
-  --sev-high:        #B42318;
-  --sev-high-soft:   #FDF1F0;
-  --sev-high-border: #F5C9C4;
+  --sev-high:        #C2362B;
+  --sev-high-soft:   #FCF0EE;
+  --sev-high-border: #F2C8C3;
 
   --sev-medium:      #A15C07;
-  --sev-medium-soft: #FDF6E8;
-  --sev-medium-border:#F1D9A8;
+  --sev-medium-soft: #FDF5E7;
+  --sev-medium-border:#F0D8A9;
 
   --sev-low:         #2F6B4A;
-  --sev-low-soft:    #EAF3EC;
-  --sev-low-border:  #C5DFCC;
+  --sev-low-soft:    #EBF4EE;
+  --sev-low-border:  #C4DECB;
 
-  /* Area-wide signal: slate blue */
-  --area:            #2F6690;
-  --area-soft:       #EDF3F8;
-  --area-border:     #C6D8E6;
+  /* Area-wide signal: teal, kept apart from the brand blue */
+  --area:            #177E89;
+  --area-soft:       #E8F4F5;
+  --area-border:     #BFDFE2;
 
   /* Evidence polarity */
   --ev-for:          #2F6B4A;
-  --ev-against:      #6B5B4E;
-  --ev-context:      #A3ABA6;
+  --ev-against:      #6C5A4C;
+  --ev-context:      #A4AAB8;
 
   /* Scene quality */
   --q-usable:        #2F6B4A;
   --q-partial:       #A15C07;
-  --q-cloudy:        #949D98;
+  --q-cloudy:        #9AA1B2;
 
   /* Typography */
-  --display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
-  --font: "Figtree Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --display: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 
-  /* Radii & Elevation: borders do the work, shadows only for floating things */
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 12px;
+  /* Radii & Elevation: square-ish, register-like; shadows only for floating things */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
   --raised:  none;
-  --overlay: 0 12px 32px rgba(29, 37, 34, 0.14), 0 2px 8px rgba(29, 37, 34, 0.08);
+  --overlay: 0 12px 32px rgba(20, 27, 45, 0.16), 0 2px 8px rgba(20, 27, 45, 0.08);
 
   /* Motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);

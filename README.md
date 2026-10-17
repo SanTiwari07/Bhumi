@@ -1,141 +1,251 @@
 <p align="center">
-  <img src="docs/brand/wordmark.svg" alt="Bhumi — Satellite-to-Blockchain Climate dMRV & Ecological Stewardship" width="420" />
-</p>
-
-<h1 align="center">Bhumi (भूमि) — Verifiable Satellite-to-Blockchain Climate dMRV & Ecological Stewardship</h1>
-
-<p align="center">
-  <strong>IEEE ClimateChain Global Hackathon 2026</strong><br/>
-  <strong>Primary Track:</strong> Climate Data &amp; Environmental Monitoring · <strong>Secondary Bridge:</strong> Carbon Markets &amp; Emissions Transparency (Cryptographic dMRV)
+  <img src="docs/brand/wordmark.svg" alt="Bhumi, crop health and verifiable field records" width="400" />
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Ethereum_Sepolia-11155111_(0xaa36a7)-2D6A4F?style=flat-square" alt="Ethereum Sepolia 11155111" />
-  <img src="https://img.shields.io/badge/Solidity-0.8.24-1B4332?style=flat-square" alt="Solidity 0.8.24" />
-  <img src="https://img.shields.io/badge/Sentinel--2_L2A-10m_NDVI_%2B_NDWI-3A7D44?style=flat-square" alt="Sentinel-2 10m" />
-  <img src="https://img.shields.io/badge/IEEE_Citations-6_Peer--Reviewed_Papers-BC6C25?style=flat-square" alt="6 IEEE Papers" />
-  <img src="https://img.shields.io/badge/Backend_Tests-70_Passing-15803D?style=flat-square" alt="70 Passing Tests" />
+  <strong>Satellites flag the field. Bhumi says why, names the one check that settles it, and seals the evidence so nobody can quietly change it later.</strong>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/track-Climate%20Data%20%26%20Environmental%20Monitoring-1E3A6E?style=flat-square" alt="Track: Climate Data and Environmental Monitoring" />
+  <img src="https://img.shields.io/badge/imagery-Sentinel--2%20%C2%B7%2010%20m-177E89?style=flat-square" alt="Sentinel-2, 10 m" />
+  <img src="https://img.shields.io/badge/ledger-Ethereum%20Sepolia-E3A008?style=flat-square" alt="Ethereum Sepolia" />
+  <img src="https://img.shields.io/badge/tests-70%20passing-2F6B4A?style=flat-square" alt="70 tests passing" />
+  <img src="https://img.shields.io/badge/license-MIT-5D667C?style=flat-square" alt="MIT license" />
+</p>
+
+<p align="center">
+  <a href="#the-problem">Problem</a> ·
+  <a href="#what-bhumi-does">What it does</a> ·
+  <a href="#a-walk-through-the-app">Screens</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#why-it-matters-for-the-climate">Impact</a> ·
+  <a href="#run-it">Run it</a> ·
+  <a href="#honest-limits">Limits</a>
+</p>
+
+<p align="center">
+  <img src="docs/screens/02-overview.jpg" alt="Bhumi overview for Niphad, Nashik: a satellite map of 150 watched fields with a Visit first list of the five most urgent fields, how the 68 alerts were explained, and the sealed ledger summary" width="100%" />
+</p>
+
+> **IEEE ClimateChain Global Hackathon 2026** · Track: **Climate Data & Environmental Monitoring**, bridging into **Carbon Markets & Emissions Transparency**.
+> Everything in the screenshots runs on real Sentinel-2 imagery and Open-Meteo weather for 150 fields in Niphad, Nashik (Maharashtra, India).
+
 ---
 
-## 1. Executive Summary & Problem Statement
+## The problem
 
-Global regenerative agriculture, watershed stewardship, and soil-carbon programs suffer from a fundamental **verification bottleneck**:
-1. **Opaque Satellite Indices:** Raw vegetation and moisture rasters (`NDVI`, `NDWI`, `NDMI`, `BSI`) tell an agronomist or carbon auditor *where* reflectance shifted, but never **why**—confounding localized irrigation failures or root-zone waterlogging with regional heatwaves or cloud artifacts.
-2. **Unverifiable Off-Chain Claims:** Environmental monitoring logs are typically stored in mutable centralized databases without cryptographic provenance, allowing selective cherry-picking of favorable satellite passes, duplicate ecological claims across reporting epochs, or exposure of sensitive smallholder farm coordinates.
+Environmental monitoring has two weak links, and climate programmes need both fixed at once.
 
-**Bhumi (भूमि — Sanskrit for *Earth / Living Soil*)** solves both problems in a single end-to-end **Digital Measurement, Reporting, and Verification (dMRV)** platform:
-- **Multi-Spectral Ecological Diagnostics:** Fuses 10m **Sentinel-2 L2A** optical imagery (`B02`, `B03`, `B04`, `B08`, `B11`, `B12`, `SCL`) with **ERA5-Land / Open-Meteo** agro-climatic anomaly baselines to isolate true parcel-level stress, rank competing ecological hypotheses with explicit counter-evidence, and generate targeted ground-scouting protocols.
-- **Cryptographic dMRV on Ethereum Sepolia (`chainId: 11155111`):** Decomposes every parcel dossier into **6 canonical domain-separated SHA-256 Merkle leaves**, protects farmer coordinates via a **Geospatial Geohash Commitment** (`[IEEE-1]`), prevents cross-epoch double-counting via a **Deterministic Anti-Double-Counting Nullifier** (`[IEEE-2]`), and anchors the parcel Merkle root to [`contracts/BhumiClimateRegistry.sol`](contracts/BhumiClimateRegistry.sol).
+**1. A red patch is not a diagnosis.** Sentinel-2 photographs every field on Earth about every five days for free. When a field loses its green, the picture cannot say whether it is cloud, a harvest on schedule, a heatwave hitting the whole district, or a failing drip line on one farm. Field officers, who each look after hundreds of farms, cannot visit every alert, so they stop trusting the alerts.
 
----
+**2. Monitoring records are easy to bend.** Soil-carbon, water-stewardship and crop-insurance schemes all depend on field records. Kept in an ordinary database, those records can be edited after the fact, cherry-picked to the good satellite passes, or claimed twice for the same field and season. That is exactly the double-counting and verification problem the carbon-market track describes.
 
-## 2. System Architecture
+In the shipped Niphad demo area, **68 of 150 fields** raised an alert in three weeks. Bhumi explained **42** without anyone leaving the office. The other **26** arrive with a likely cause, what else it could be, and one cheap check to do on site.
+
+## What Bhumi does
+
+For every alert, Bhumi runs the same three questions an experienced agronomist would:
+
+| Stage | Question | Example outcome |
+|---|---|---|
+| 1 | **Is the signal real?** Cloud, shadow, haze, or pixels mixing with the land next door. | Field 095: a data artefact on the Oct 2 scene. Dismissed, with the reason on screen. |
+| 2 | **Is it expected, or shared with the area?** Harvest season, neighbouring fields, the weather. | 17 fields dropped together in the same hot spell: one area-wide alert, not 17 visits. |
+| 3 | **If it is this field alone, what fits?** Rank the causes and pick the cheapest check that tells the top two apart. | Field 128: pest or disease spread, likely. Check: photograph leaf undersides, about 4 minutes. |
+
+Then it **seals the case**. Every piece of evidence is fingerprinted with SHA-256, the fingerprints become a Merkle tree, every case root rolls up into one area root, and that root can be anchored on Ethereum Sepolia. When the officer records what they found, the finding becomes new evidence, the ranking updates, and the root changes, so the history of a case can always be checked.
+
+**Three promises**
+
+- **It shows its own false alarms, with reasons.** Showing the cloud and the harvest it dismissed is what makes the real hits believable.
+- **The language model never decides.** Deterministic code turns pixels into evidence and ranks causes. Gemini only writes the plain-language summary, must cite evidence IDs that exist, and is replaced by a template if it does not. Without an API key the app works the same.
+- **When it does not know, it asks.** If no cause clears the bar, the answer is "ask or visit" with the cheapest question, never a forced guess.
+
+## A walk through the app
+
+Every image is a screenshot of the running app on real data.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screens/01-sign-in.jpg" alt="Sign-in page over satellite imagery of Niphad" /><br /><sub><b>Sign in.</b> The Niphad demo is one click, no account needed.</sub></td>
+    <td width="50%"><img src="docs/screens/03-cases.jpg" alt="Cases table ranked by severity, each with what changed, the likely cause and status" /><br /><sub><b>Cases.</b> Every alert, most urgent first, with what changed and the likely cause or the question to ask.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/04-case-summary.jpg" alt="Field 128 summary: pest or disease spread is the likely cause, drawn as its real 10 m pixels" /><br /><sub><b>A case.</b> Field 128 as its real 10 m pixels. The likely cause in plain words, what else it could be, and the next best check pinned at the bottom.</sub></td>
+    <td><img src="docs/screens/05-case-diagnosis.jpg" alt="Diagnosis tab: ranked causes with supporting and contradicting evidence lines" /><br /><sub><b>Diagnosis.</b> Each cause lists what supports it and what argues against it, every line tied to an evidence ID.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/06-case-evidence.jpg" alt="Evidence tab: seven checks, each leaving a numbered piece of evidence" /><br /><sub><b>Evidence.</b> Seven deterministic checks, each leaving numbered evidence (E1 to E7) with the data it came from.</sub></td>
+    <td><img src="docs/screens/07-case-proof.jpg" alt="Proof tab: evidence root, satellite-only root, location commitment, season marker and seven fingerprints, verified" /><br /><sub><b>Proof.</b> The case's fingerprints and roots, recomputed on demand. "Proof checks out" means nothing was changed.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/08-ledger.jpg" alt="Ledger: the area root, cases sealed, network, and a per-case proof inspector" /><br /><sub><b>Ledger.</b> One area root for every case in Niphad, a proof inspector per case, JSON export, and anchoring on Sepolia.</sub></td>
+    <td><img src="docs/screens/09-field-checklist.jpg" alt="Field checklist: one check, what each result means, and a form to record the finding" /><br /><sub><b>At the field.</b> One check, what each result means, and a form. The finding becomes new evidence.</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/screens/10-phone-overview.jpg" alt="Overview on a phone" width="260" />
+  &nbsp;&nbsp;
+  <img src="docs/screens/11-phone-case.jpg" alt="A case on a phone" width="260" />
+  <br /><sub>Built for a phone in a field as much as a desk in an office.</sub>
+</p>
+
+## How it works
 
 ```mermaid
 flowchart LR
-  subgraph EO["1. Earth Observation & Climate Layer"]
-    S2["Sentinel-2 L2A (10m)\nB02, B03, B04, B08, B11, B12, SCL\n[IEEE-5, IEEE-6]"]
-    WX["ERA5-Land / Open-Meteo\nRain, ET0 & Soil Moisture Baseline"]
+  subgraph Data["Real data"]
+    S2["Sentinel-2 L2A, 10 m<br/>Cloud Score+ masking"]
+    WX["Open-Meteo<br/>ERA5 and ERA5-Land"]
+    FTW["Fields of the World<br/>field boundaries"]
   end
 
-  subgraph DIAG["2. Bhumi Ecological Diagnostic Engine"]
-    ANOM["Neighborhood Baseline\nDivergence Isolation"]
-    HYP["Ranked Ecological Hypotheses\n+ Counter-Evidence & Abstention Gate"]
-    SCOUT["Ground Verification Protocol\n& Operator Stewardship State"]
+  subgraph AI["Diagnosis (backend/app)"]
+    T["7 evidence tools<br/>scene quality, NDVI change,<br/>boundary, neighbours,<br/>pattern, weather, calendar"]
+    R["Rule engine<br/>11 causes in 3 stages"]
+    N["Next best check<br/>split power per minute"]
+    G["Gemini summary<br/>cites evidence IDs only"]
   end
 
-  subgraph DMRV["3. Cryptographic dMRV Proof Engine (backend/app/blockchain.py)"]
-    LEAVES["6 Canonical SHA-256 Leaves\n(0x00 Leaf / 0x01 Node Domain Separation)"]
-    NULLIFIER["Anti-Double-Counting Nullifier\nSHA256(BHUMI_NULLIFIER_V1 || geohash || season || window)\n[IEEE-2]"]
-    MERKLE["Binary SHA-256 Merkle Root\n& Sibling Inclusion Paths"]
+  subgraph Proof["Proof (backend/app/blockchain.py)"]
+    L["SHA-256 leaf per evidence item"]
+    M["Case Merkle root"]
+    A["Area root over all cases"]
   end
 
-  subgraph CHAIN["4. Ethereum Sepolia Testnet (chainId: 11155111)"]
-    SOL["BhumiClimateRegistry.sol\nanchorMonitoringRecord() & verifyMerkleProof()\n[IEEE-1, IEEE-3, IEEE-4]"]
-  end
+  C["Ethereum Sepolia<br/>anchor transaction"]
 
-  S2 --> ANOM
-  WX --> ANOM
-  ANOM --> HYP --> SCOUT
-  SCOUT --> LEAVES
-  SCOUT --> NULLIFIER
-  LEAVES --> MERKLE
-  NULLIFIER --> SOL
-  MERKLE --> SOL
+  S2 --> T
+  WX --> T
+  FTW --> T
+  T --> R --> N
+  R --> G
+  T --> L --> M --> A --> C
 ```
 
----
+### The diagnosis is deterministic
 
-## 3. Cryptographic dMRV & Ethereum Sepolia Specification
+- **Seven evidence tools** ([`backend/app/tools`](backend/app/tools)) turn pixels and weather into numbered evidence: scene quality, NDVI change by zone, a boundary check with a 10 m inner buffer, comparison with neighbouring fields, the spatial pattern of the loss, weather, and the crop calendar.
+- **A rule table** ([`backend/app/engine/rules.py`](backend/app/engine/rules.py)) scores **11 causes** in three stages: data artefacts; expected or area-wide events such as harvest, dry spells and storms; and single-field causes such as irrigation failure, pest or disease, nutrient deficiency and standing water. A missing fact counts neither way and is shown as unknown.
+- **The next best check** ([`backend/app/next_check.py`](backend/app/next_check.py)) is computed, not written. Every on-site check in [`data/checks.json`](data/checks.json) is scored by how cleanly its result separates the top two causes, divided by the minutes it takes.
+- **Findings reopen the reasoning** ([`backend/app/resolve.py`](backend/app/resolve.py)). A recorded finding moves only the causes it supports or contradicts, and the next check is chosen again.
 
-### 3.1 Six Canonical Domain-Separated SHA-256 Leaves
-For every monitored parcel case, [`backend/app/blockchain.py`](backend/app/blockchain.py) serializes and hashes 6 deterministic leaves using canonical JSON (`sort_keys=True`, compact separators) with `0x00` leaf domain separation and `0x01` internal node prefixing:
-1. **`01_spatial_parcel_identity`:** GeoJSON polygon hash, geodesic area (`hectares`), centroid coordinates, and 9-character geohash commitment (`[IEEE-1]`).
-2. **`02_sentinel2_multispectral_window`:** Multi-date Sentinel-2 L2A observation window, clear-sky pass count, and cloud cover statistics (`[IEEE-6]`).
-3. **`03_agro_meteorological_era5`:** Cumulative precipitation (`mm`), reference evapotranspiration $\text{ET}_0$, soil moisture, and water balance anomaly.
-4. **`04_biophysical_anomaly_ensemble`:** Parcel vs. neighborhood `NDVI`, `NDWI`, `NDMI`, `BSI`, and localized Z-score anomaly vector (`[IEEE-5]`).
-5. **`05_diagnostic_hypothesis_attribution`:** Ranked ecological causes, confidence score (`bps`), abstention status, and recommended field check (`[IEEE-4]`).
-6. **`06_stewardship_carbon_dmrv_metrics`:** Soil Organic Carbon (SOC) proxy ($\text{tCO}_2\text{e/ha/yr}$), nitrogen $\text{N}_2\text{O}$ over-application risk avoidance ($\text{kg N/ha}$), and irrigation water conservation potential ($\text{m}^3\text{/ha}$).
+### The record is tamper-evident
 
-### 3.2 Deterministic Anti-Double-Counting Nullifier
-To prevent duplicate ecological stewardship or carbon-readiness claims for the same parcel and seasonal window:
-$$\text{Nullifier} = \text{SHA256}(\texttt{"BHUMI\_NULLIFIER\_V1"} \parallel \text{geohash} \parallel \text{season\_year} \parallel \text{window\_end})$$
+All of this lives in [`backend/app/blockchain.py`](backend/app/blockchain.py) and is covered by tests.
 
-### 3.3 Solidity Smart Contract ([`contracts/BhumiClimateRegistry.sol`](contracts/BhumiClimateRegistry.sol))
-Targeting **Ethereum Sepolia (`chainId: 11155111`)**, `BhumiClimateRegistry.sol` (`pragma solidity ^0.8.24`) provides:
-- `anchorMonitoringRecord(...)`: Anchors a parcel's `merkleRoot`, enforces `nullifierUsed` anti-double-counting replay protection (`Revert: NullifierAlreadyUsed`), and emits `MonitoringRecordAnchored`.
-- `verifyMerkleProof(...)`: Pure on-chain verifier for checking binary SHA-256 Merkle inclusion paths (`0x01` internal node prefixing).
+| Piece | How it is built | What it guarantees |
+|---|---|---|
+| **Evidence leaf** | `SHA-256("bhumi:leaf:v1:" + canonical JSON of one evidence item)` with sorted keys | Changing any reading, date or source changes the leaf. |
+| **Case root** | Binary Merkle tree over the leaves; nodes are `SHA-256("bhumi:node:v1:" + left + right)` | One hash commits to all evidence; any item can be proven with its sibling path. |
+| **Satellite-only root** | The same tree before any field visit | Shows exactly what the officer's finding added. |
+| **Location commitment** | `SHA-256` of the field ID and its centroid rounded to about 100 m | The ledger refers to a field without publishing its exact boundary. |
+| **Season marker** (nullifier) | `SHA-256(location commitment + alert date)` | One fixed ID per field and satellite pass, so a registry can refuse a second claim: the double-counting guard carbon markets need. |
+| **Area root** | Merkle tree over every case root in the area | One value to anchor on-chain per pass. Each case gets an inclusion path to it. |
 
----
+**Anchoring.** With a browser wallet such as MetaMask, *Anchor area root* switches to Sepolia and sends a zero-value transaction that carries the area root in its calldata, then records the transaction hash. [`contracts/BhumiClimateRegistry.sol`](contracts/BhumiClimateRegistry.sol) adds a registry on top: `anchorAreaEpoch` stores an area root per pass, `attestFieldFinding` records a case root and marks its season marker as used, and `verifyCaseRoot` checks a case against what was stored.
 
-## 4. Peer-Reviewed IEEE Academic Grounding
+## Why it matters for the climate
 
-Bhumi’s architecture directly implements and cites **6 peer-reviewed IEEE publications**, including foundational blockchain and cryptographic research authored by **IEEE ClimateChain Global Hackathon 2026 judges**:
+- **Fewer wasted trips.** In the demo, 42 of 68 alerts are settled remotely. Every visit avoided is fuel not burned, and officer time goes to the fields that need it.
+- **Earlier action on real stress.** Water stress, pests and waterlogging get a named cause and a 2 to 10 minute check while there is still time to act, protecting smallholder yields and the soil carbon in those fields.
+- **Monitoring data a registry can trust.** Sealed, field-checked records with a double-counting guard are what soil-carbon, water-stewardship and parametric-insurance programmes need before they can pay smallholders.
+- **Built to scale.** The imagery is free and global, field boundaries come from Fields of the World, and an officer can mark a new area by searching a taluka and drawing around the farms. Nothing is tuned to Niphad.
 
-| Ref ID | IEEE Citation & DOI | Connection to Bhumi Architecture |
-| :--- | :--- | :--- |
-| **`IEEE-1`** | **K. Dembski, S. Akleylek, and K. Seyhan**, *"A Review on Blockchain-Based Systems in Agriculture,"* **IEEE Access**, vol. 10, pp. 90465–90489, 2022. DOI: `10.1109/ACCESS.2022.3201895` *(Authored by Hackathon Judges **Prof. Dr. Sedat Akleylek** & **Dr. Kübra Seyhan**)* | Motivates Bhumi’s hybrid off-chain satellite diagnostic storage + on-chain Merkle root registry and **Privacy-Preserving Geospatial Parcel Commitments** so smallholder farm coordinates are not exposed in cleartext on public ledgers. |
-| **`IEEE-2`** | **D. Javeed, T. Gao, M. T. Khan, and M. Iqbal**, *"A Zero-Knowledge Proof-Based Verifiable Decentralized Framework for Emissions and Environmental Data,"* **IEEE Access**, vol. 12, pp. 41205–41221, 2024. DOI: `10.1109/ACCESS.2024.3378120` *(Co-authored by Hackathon Judge **Dr. Mubashar Iqbal**)* | Grounds Bhumi’s **Anti-Double-Counting Nullifier** construction and deterministic sibling-path verification to prevent cross-epoch double-counting of environmental stewardship claims. |
-| **`IEEE-3`** | **K. Seyhan and S. Akleylek**, *"Classification of Biometric and Cryptographic Authentication Systems in Distributed Ledgers,"* **IEEE Access**, vol. 10, pp. 112301–112322, 2022. DOI: `10.1109/ACCESS.2022.3216410` *(Authored by Hackathon Judges **Dr. Kübra Seyhan** & **Prof. Dr. Sedat Akleylek**)* | Informs Bhumi’s domain-separated cryptographic leaf hashing (`0x00` leaf / `0x01` node) and operator-signed human-in-the-loop field verification workflow. |
-| **`IEEE-4`** | **K. Salah, M. H. U. Rehman, N. Nizamuddin, and A. Al-Fuqaha**, *"Blockchain for AI: Review and Open Research Challenges,"* **IEEE Access**, vol. 7, pp. 10127–10149, 2019. DOI: `10.1109/ACCESS.2018.2890507` | Establishes the **"Explainable AI + Auditable Ledger"** pattern: Bhumi never anchors an opaque black-box score; it hashes the supporting telemetry, counter-evidence, and epistemic uncertainty boundaries into the Merkle tree. |
-| **`IEEE-5`** | **M. Weiss, F. Jacob, and G. Duveiller**, *"Remote Sensing for Agricultural Applications: A Meta-Review,"* **IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (IEEE JSTARS)**, vol. 13, pp. 509–532, 2020. DOI: `10.1109/JSTARS.2020.2968712` | Grounds Bhumi’s multi-spectral anomaly isolation pairing **NDVI** (`(B08 - B04)/(B08 + B04)`) for chlorophyll/canopy vigor with **NDWI**, **NDMI**, and **BSI** for root-zone moisture stress. |
-| **`IEEE-6`** | **J. Louis et al.**, *"Sentinel-2 Sen2Cor: L2A Bottom-of-Atmosphere Reflectance and Scene Classification,"* **IEEE Transactions on Geoscience and Remote Sensing (IEEE TGRS)**, vol. 57, no. 7, pp. 4812–4826, 2019. DOI: `10.1109/TGRS.2019.2893180` | Grounds Bhumi’s **SCL (Scene Classification Layer)** cloud/shadow screening so atmospheric artifacts are rejected before triggering field alerts or dMRV attestations. |
+## How Bhumi meets the judging criteria
 
----
+| Criterion | Where to look |
+|---|---|
+| **Climate impact** | Real Sentinel-2 monitoring of 150 smallholder fields; earlier, targeted action on crop stress; trusted records for carbon and water programmes. |
+| **Innovation and creativity** | Differential diagnosis on satellite alerts, a computed next best check, and a Merkle-sealed evidence trail where a field visit visibly changes the root. |
+| **Technical execution** | FastAPI and React app on real data, 7 evidence tools, an 11-cause rule engine, SHA-256 Merkle proofs with in-app verification, Sepolia anchoring, a Solidity registry, and 70 passing tests. |
+| **Practical usefulness** | Works on a phone, needs no API key, explains every dismissal, and uses only free global data, so a farmer producer organisation could run it tomorrow. |
+| **Presentation** | The screens above walk from problem to proof; the Proof tab and Ledger let a judge verify a case in one click. |
 
-## 5. Quickstart & Verification
+## Run it
 
-### 5.1 Run Backend & Automated Test Suite (70 Tests)
+**Requirements:** Python 3.11+, Node 18+.
+
 ```bash
-# Install Python dependencies
-pip install -r backend/requirements.txt
-
-# Run the full 70-test suite (including SHA-256 Merkle proof, Sepolia anchoring, and Solidity contract verification)
+# 1. Backend
+pip install -e "backend[dev]"
 python -m pytest backend/tests -q
 ```
 
-### 5.2 Build Frontend & Launch Full-Stack Platform
 ```bash
-# Build the React + TypeScript + Leaflet frontend
-npm --prefix frontend install
-npm --prefix frontend run build
-
-# Launch the FastAPI server (serves both API and built UI on http://127.0.0.1:8000)
-python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+# 2. API on http://127.0.0.1:8000 (serves the built UI too, once step 3 has run)
+python -m uvicorn app.main:app --app-dir backend --port 8000
 ```
 
----
+```bash
+# 3. Frontend, in a second terminal: dev server on http://localhost:5173
+npm --prefix frontend install
+npm --prefix frontend run dev
+```
 
-## 6. Key API Endpoints
+Open the app and choose **Try the Niphad demo**. For a single server, run `npm --prefix frontend run build` and open http://127.0.0.1:8000.
 
-| Method & Endpoint | Description |
-| :--- | :--- |
-| `GET /api/home` | Returns basin telemetry summary, triage counts, GeoJSON parcel boundaries, and aggregate dMRV carbon/water stewardship metrics. |
-| `GET /api/cases` | Returns prioritized parcel queue with `dmrv_proof` (`merkle_root`, `nullifier_hash`, `carbon_metrics`, `sepolia_anchor`) for every parcel. |
-| `GET /api/cases/{id}` | Returns full ecological dossier, multi-date Sentinel-2 spectral layers, ranked hypotheses, checklist, and `dmrv_proof`. |
-| `GET /api/ledger` | Returns the global Ethereum Sepolia (`11155111`) dMRV ledger summary, anchored proofs, and the 6 IEEE references. |
-| `GET /api/cases/{id}/proof` | Returns the 6 canonical SHA-256 Merkle leaves, sibling inclusion proofs, carbon metrics, and verification state for a parcel. |
-| `POST /api/cases/{id}/anchor` | Anchors a parcel's Merkle root to Ethereum Sepolia (`live_metamask_sepolia` or `deterministic_sepolia_simulation`). |
-| `POST /api/cases/{id}/verify` | Deterministically recomputes all 6 SHA-256 leaves, internal Merkle nodes, `merkle_root`, and `nullifier_hash`. |
+Every setting is optional; copy [`.env.example`](.env.example) to `.env` to set them.
+
+| Variable | What it does |
+|---|---|
+| `GEMINI_API_KEY` | Plain-language summaries and *Ask Bhumi* answers. Without it, a template and retrieval-only answers are used. |
+| `BHUMI_LLM=off` | Turn the language model off even if a key is set. |
+| `BHUMI_EE_PROJECT` | Google Earth Engine project, for building new areas from fresh imagery. |
+| `BHUMI_SEPOLIA_CONTRACT` | Address of your deployed `BhumiClimateRegistry`. |
+
+### API
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/auth/demo` | Start a demo session in Niphad. |
+| `GET /api/home` | Area summary, alert counts and the area root. |
+| `GET /api/cases`, `GET /api/cases/{id}` | Ranked cases; one case with its evidence, causes and next check. |
+| `POST /api/cases/{id}/findings` | Record what the officer found on site. |
+| `GET /api/cases/{id}/proof` | Leaves, roots, location commitment, season marker and inclusion paths. |
+| `POST /api/cases/{id}/verify` | Recompute every hash and report whether the case still matches. |
+| `GET /api/ledger` | Area root, every case entry and recorded Sepolia anchors. |
+| `POST /api/ledger/anchor-tx` | Record an anchor transaction for the area root. |
+| `POST /api/ask` | *Ask Bhumi*: questions answered from this area's own records. |
+
+### Repository
+
+```
+backend/app/tools/      seven evidence tools (pixels and weather to evidence)
+backend/app/engine/     rule table and three-stage scoring
+backend/app/blockchain.py  leaves, Merkle trees, commitments, verification
+contracts/              BhumiClimateRegistry.sol
+data/areas/niphad/      the shipped demo area: fields, scenes, weather, cases
+frontend/src/           React, TypeScript, Leaflet
+docs/screens/           the screenshots in this README
+```
+
+## Honest limits
+
+- **The contract is written but not yet deployed.** Anchoring today puts the area root into a Sepolia transaction's calldata; it does not call the contract. Set `BHUMI_SEPOLIA_CONTRACT` once you deploy it.
+- **The contract records season markers but does not yet refuse a reused one.** Adding that `require` is a one-line change and the next step for on-chain double-counting protection.
+- **Without a wallet, anchoring is simulated.** The app says so and records the result locally. Only anchors made with a wallet exist on Sepolia.
+- **The location commitment is coarse, not secret.** It hides a field's exact boundary, but someone who can guess the field ID and the 100 m cell can recompute it. A salted or zero-knowledge commitment is the next step.
+- **10 m pixels have limits.** Bhumi sees patterns across a field, not individual plants, and says so on the evidence it shows.
+- **One demo area ships in the repo.** New areas build from live Earth Engine and Open-Meteo data, which needs an Earth Engine account.
+
+## Related research
+
+These peer-reviewed papers shaped the proof design. Bhumi implements the simple SHA-256 constructions described above, not the full schemes in the papers.
+
+1. B. B. Sezer, S. Akleylek, U. Nuriyev, "PP-PQB: Privacy-Preserving in Post-Quantum Blockchain-Based Systems: A Systematization of Knowledge," *IEEE Access*, vol. 13, pp. 41382–41405, 2025. [doi:10.1109/ACCESS.2025.3545943](https://doi.org/10.1109/ACCESS.2025.3545943). *Privacy of on-chain records; motivates the location commitment.*
+2. M. Iqbal, R. Matulevičius, "Exploring Sybil and Double-Spending Risks in Blockchain Systems," *IEEE Access*, vol. 9, pp. 76153–76177, 2021. [doi:10.1109/ACCESS.2021.3081998](https://doi.org/10.1109/ACCESS.2021.3081998). *Double-spending risks; motivates the season marker.*
+3. K. Salah, M. H. U. Rehman, N. Nizamuddin, A. Al-Fuqaha, "Blockchain for AI: Review and Open Research Challenges," *IEEE Access*, vol. 7, pp. 10127–10149, 2019. [doi:10.1109/ACCESS.2018.2890507](https://doi.org/10.1109/ACCESS.2018.2890507). *Sealing the inputs to an AI decision, not only its output.*
+4. M. Weiss, F. Jacob, G. Duveiller, "Remote sensing for agricultural applications: A meta-review," *Remote Sensing of Environment*, vol. 236, 2020. [doi:10.1016/j.rse.2019.111402](https://doi.org/10.1016/j.rse.2019.111402). *What vegetation indices can and cannot tell you.*
+5. Z. Zhu, S. Wang, C. E. Woodcock, "Improvement and expansion of the Fmask algorithm: cloud, cloud shadow, and snow detection for Landsats 4–7, 8, and Sentinel 2 images," *Remote Sensing of Environment*, vol. 159, 2015. [doi:10.1016/j.rse.2014.12.014](https://doi.org/10.1016/j.rse.2014.12.014). *Why cloud and shadow are screened before any alert.*
+
+**Data:** Copernicus Sentinel-2 via Google Earth Engine with Cloud Score+; Open-Meteo (ERA5, ERA5-Land); Fields of the World field boundaries; ESA WorldCover; basemap imagery © Esri, Maxar, Earthstar Geographics.
+
+## Lineage
+
+Bhumi builds on [FieldDX](https://github.com/SanTiwari07/FieldDX), the same author's earlier satellite crop-diagnosis project. The diagnosis engine and data pipeline come from FieldDX. New for this hackathon: the tamper-evident proof layer (evidence leaves, Merkle roots, location commitment, season marker, area root, in-app verification), Sepolia anchoring, the `BhumiClimateRegistry` contract, the ledger, and a redesigned interface.
+
+## License
+
+[MIT](LICENSE)

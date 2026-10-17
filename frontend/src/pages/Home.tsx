@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, CheckCircle2, ChevronRight, Layers, RefreshCw, ShieldCheck } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Layers, RefreshCw, ShieldCheck } from "lucide-react";
 import { api, BuildState, HomeData } from "../api";
 import { useSession } from "../session";
 import FieldsMap from "../components/FieldsMap";
-import { ConfidenceMeter, SeverityBadge, Spinner } from "../components/ui";
+import { SeverityBadge, Spinner } from "../components/ui";
 import { fmtDate, plainDrop } from "../lib/format";
 
 function Building({ areaName }: { areaName: string }) {
@@ -133,14 +133,44 @@ function Briefing() {
 
   // counts.dismissed excludes harvests; together they are every case settled without a visit
   const settled = h.counts.dismissed + h.counts.harvest;
-  const segments = [
-    { key: "visit", n: h.counts.visit, title: "Needs a visit" },
-    { key: "watch", n: h.counts.watch, title: "Watching" },
-    { key: "area", n: h.counts.area_alert, title: "Area-wide" },
-    { key: "harvest", n: h.counts.harvest, title: "Harvest" },
-    { key: "dismissed", n: h.counts.dismissed, title: "Other, dismissed" },
-  ].filter((s) => s.n > 0);
+  const breakdown = [
+    { key: "visit", n: h.counts.visit, label: "Need someone on the ground", filter: "visit" },
+    { key: "watch", n: h.counts.watch, label: "Watching for one more clear pass", filter: "watch" },
+    { key: "area", n: h.counts.area_alert, label: "Area-wide, weather or canal", filter: "area_alert" },
+    { key: "harvest", n: h.counts.harvest, label: "Harvest, on schedule", filter: "dismissed" },
+    { key: "dismissed", n: h.counts.dismissed, label: "Cloud, field edge or field work", filter: "dismissed" },
+  ];
+  const most = Math.max(1, ...breakdown.map((b) => b.n));
   const root = h.area_merkle_root;
+
+  const visitPanel = (
+    <section className="visit-float" aria-labelledby="visit-h">
+      <div className="vf-head">
+        <h2 id="visit-h">Visit first</h2>
+        <Link to="/cases?filter=visit" className="more">All {h.counts.visit}</Link>
+      </div>
+      {h.top.length === 0 ? (
+        <p className="empty"><CheckCircle2 size={16} aria-hidden /> No field needs a visit right now.</p>
+      ) : (
+        <ol className="visit-list-home">
+          {h.top.map((r) => (
+            <li key={r.id}>
+              <Link to={`/case/${r.id}`}>
+                <span className="fid">{r.field.id}</span>
+                <span className="vl-main">
+                  <span className="vl-cause">{r.leading}</span>
+                  <small>
+                    {r.headline ? `${plainDrop(r.headline.delta, r.headline.zone_label)}, ${fmtDate(r.headline.date)}` : r.reason}
+                  </small>
+                </span>
+                <SeverityBadge level={r.severity} />
+              </Link>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
 
   return (
     <main className="page home">
@@ -161,97 +191,43 @@ function Briefing() {
         </div>
       </header>
 
-      <section className="season" aria-labelledby="season-h">
-        <div className="season-top">
-          <h2 id="season-h">{h.alerts} alerts this season</h2>
-          <p className="muted">
-            {settled} were explained without a trip. {h.counts.visit} fields need someone on the ground.
-          </p>
-        </div>
-        <div className="triage-bar" role="img" aria-label="Alerts by outcome">
-          {segments.map((s) => (
-            <span key={s.key} className={`tb-${s.key}`} style={{ flexGrow: s.n }} title={`${s.title}: ${s.n}`} />
-          ))}
-        </div>
-        <ul className="season-keys">
-          <li>
-            <Link to="/cases?filter=visit" className="tk tk-visit">
-              <i aria-hidden /><strong>{h.counts.visit}</strong>
-              <span>Need a visit</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/cases?filter=watch" className="tk tk-watch">
-              <i aria-hidden /><strong>{h.counts.watch}</strong>
-              <span>Watching for one more clear pass</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/cases?filter=area_alert" className="tk tk-area">
-              <i aria-hidden /><strong>{h.counts.area_alert}</strong>
-              <span>Area-wide, weather or canal</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/cases?filter=dismissed" className="tk tk-harvest">
-              <i aria-hidden /><strong>{settled}</strong>
-              <span>Explained: {h.counts.harvest} harvest, {h.counts.dismissed} other</span>
-            </Link>
-          </li>
-        </ul>
+      <section className="map-stage" aria-label="Fields in your area">
+        <FieldsMap overlay={visitPanel} />
       </section>
 
-      <div className="home-grid">
-        <section className="panel-card home-map" aria-labelledby="map-h">
+      <div className="home-lower">
+        <section className="panel-card" aria-labelledby="where-h">
           <div className="panel-card-head">
-            <h2 id="map-h">Fields</h2>
-            <Link to="/cases?view=map" className="more">Larger map</Link>
+            <h2 id="where-h">Where the {h.alerts} alerts went</h2>
+            <span className="muted small">{settled} explained without a trip</span>
           </div>
-          <FieldsMap />
+          <ul className="breakdown">
+            {breakdown.map((b) => (
+              <li key={b.key}>
+                <Link to={`/cases?filter=${b.filter}`} className={`bd-row bd-${b.key}`}>
+                  <span className="bd-label">{b.label}</span>
+                  <span className="bd-track"><span style={{ width: `${(b.n / most) * 100}%` }} /></span>
+                  <strong>{b.n}</strong>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
 
-        <section className="panel-card visit-first" aria-labelledby="visit-h">
+        <section className="panel-card seal-card" aria-labelledby="seal-h">
           <div className="panel-card-head">
-            <h2 id="visit-h">Visit first</h2>
-            <Link to="/cases?filter=visit" className="more">All {h.counts.visit}</Link>
+            <h2 id="seal-h">Sealed in the ledger</h2>
+            <Link to="/ledger" className="more">Open ledger</Link>
           </div>
-
-          {h.top.length === 0 ? (
-            <p className="empty"><CheckCircle2 size={16} aria-hidden /> No field needs a visit right now.</p>
-          ) : (
-            <ol className="visit-list-home">
-              {h.top.map((r) => (
-                <li key={r.id}>
-                  <Link to={`/case/${r.id}`}>
-                    <span className="vl-main">
-                      <strong>{r.field.name}</strong>
-                      <span className="vl-cause">{r.leading}</span>
-                      <small>
-                        {r.headline
-                          ? `${plainDrop(r.headline.delta, r.headline.zone_label)}, ${fmtDate(r.headline.date)}`
-                          : r.reason}
-                      </small>
-                    </span>
-                    <span className="vl-side">
-                      <SeverityBadge level={r.severity} />
-                      {r.confidence && <ConfidenceMeter level={r.confidence} />}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          )}
-
-          {root && (
-            <Link to="/ledger" className="ledger-row">
-              <ShieldCheck size={16} aria-hidden />
-              <span>
-                <strong>All {h.alerts} cases are sealed in the ledger</strong>
-                <small>Area root <code>{root.slice(0, 10)}…{root.slice(-6)}</code></small>
-              </span>
-              <ChevronRight size={16} aria-hidden />
-            </Link>
-          )}
+          <p className="seal-lede">
+            Every case is fingerprinted from its evidence. Change one reading and the area root no longer matches.
+          </p>
+          <dl className="seal-facts">
+            <div><dt>Area root</dt><dd><code title={root}>{root ? `${root.slice(0, 10)}…${root.slice(-6)}` : "Not sealed yet"}</code></dd></div>
+            <div><dt>Cases sealed</dt><dd>{h.alerts}</dd></div>
+            <div><dt>Checked in the field</dt><dd>{h.counts.updated}</dd></div>
+            <div><dt>Network</dt><dd>Sepolia testnet</dd></div>
+          </dl>
         </section>
       </div>
     </main>

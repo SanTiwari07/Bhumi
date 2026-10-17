@@ -3,7 +3,7 @@
 /* ---------- case summary ---------- */
 .summary { display: flex; flex-direction: column; gap: 18px; }
 .verdict { padding: 18px 18px 16px; border-radius: var(--r-md); background: var(--canvas-subtle); border-left: 4px solid var(--ink); }
-.verdict h2 { font-size: 25px; line-height: 1.12; font-weight: 650; letter-spacing: -0.025em; margin-top: 6px; text-wrap: balance; color: var(--ink); }
+.verdict h2 { font-size: 25px; line-height: 1.12; font-weight: 600; letter-spacing: -0.025em; margin-top: 6px; text-wrap: balance; color: var(--ink); }
 .verdict p { margin-top: 8px; font-size: 14.5px; line-height: 1.55; color: var(--text); max-width: 60ch; }
 .v-kicker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 0 !important; font-size: 12.5px !important; font-weight: 700; color: var(--text-2) !important; }
 .v-case { border-left-color: var(--sev-high); }
@@ -19,7 +19,7 @@
 .facts dt { font-size: 12.5px; color: var(--text-3); font-weight: 600; }
 .facts dd { font-size: 13.5px; font-weight: 600; margin-top: 2px; color: var(--ink); }
 
-.summary h3 { font-size: 14.5px; font-weight: 650; margin-bottom: 8px; color: var(--ink); }
+.summary h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
 .why ul { display: flex; flex-direction: column; gap: 6px; }
 .why li { position: relative; padding-left: 18px; font-size: 14px; line-height: 1.5; }
 .why li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--brand); }
@@ -70,13 +70,13 @@ a.ask-ref:hover, .ask-ref button:hover { background: var(--brand); color: #fff; 
 
 /* the launcher on the observatory, inbox, and ledger */
 .ask-fab { position: fixed; right: 24px; bottom: 24px; z-index: 1100; display: inline-flex; align-items: center; gap: 10px; padding: 14px 20px 14px 16px; border: 0; border-radius: 9999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 14.5px; box-shadow: var(--overlay); transition: transform var(--fast) var(--ease), background var(--fast) var(--ease); }
-.ask-fab svg { color: #74C69D; }
+.ask-fab svg { color: var(--seal); }
 .ask-fab:hover { background: var(--ink-hover); transform: translateY(-1px); }
 .ask-drawer { position: fixed; right: 24px; bottom: 24px; z-index: 1100; width: min(440px, calc(100vw - 32px)); height: min(640px, calc(100dvh - 96px)); display: flex; flex-direction: column; background: var(--canvas); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--overlay); overflow: hidden; animation: rise var(--base) var(--ease) both; }
 .ask-drawer[hidden] { display: none; }
 .ask-drawer > header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 14px 14px 12px 18px; border-bottom: 1px solid var(--border); background: var(--canvas-subtle); }
 .ask-drawer > header div { display: flex; flex-direction: column; }
-.ask-drawer > header strong { font-family: var(--display); font-size: 17px; font-weight: 650; color: var(--ink); }
+.ask-drawer > header strong { font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--ink); }
 .ask-drawer > header small { color: var(--text-3); }
 .ask-drawer .ask { padding: 14px 14px 14px 18px; }
 

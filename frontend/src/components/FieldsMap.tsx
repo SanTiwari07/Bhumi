@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Polygon, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { useNavigate } from "react-router-dom";
@@ -11,14 +11,14 @@ type LatLng = [number, number];
 type Style = { color: string; fill: string; label: string };
 
 const STYLE: Record<string, Style> = {
-  field_case: { color: "#9E2A2B", fill: "#C14953", label: "Needs a visit" },
-  unexplained: { color: "#BC6C25", fill: "#D48C46", label: "Ask or visit" },
-  watch: { color: "#9C5214", fill: "#DDA15E", label: "Watching" },
-  area_alert: { color: "#1E555C", fill: "#2E7D87", label: "Area alert" },
-  resolved: { color: "#1B4332", fill: "#2D6A4F", label: "Resolved" },
-  harvest: { color: "#6B5B3E", fill: "#C2B280", label: "Harvest (expected)" },
-  auto_dismissed: { color: "#526358", fill: "#748B7D", label: "Dismissed" },
-  none: { color: "#D8F3DC", fill: "#74C69D", label: "Watched, healthy canopy" },
+  field_case: { color: "#8F241C", fill: "#C2362B", label: "Needs a visit" },
+  unexplained: { color: "#9A3412", fill: "#E0703A", label: "Ask or visit" },
+  watch: { color: "#8A5A06", fill: "#E3A008", label: "Watching" },
+  area_alert: { color: "#0F5960", fill: "#177E89", label: "Area alert" },
+  resolved: { color: "#1E3A6E", fill: "#2E5296", label: "Resolved" },
+  harvest: { color: "#6B5B3E", fill: "#C9B48A", label: "Harvest (expected)" },
+  auto_dismissed: { color: "#4B5368", fill: "#8A92A6", label: "Dismissed" },
+  none: { color: "#E6ECF7", fill: "#8FB3A0", label: "Watched, healthy" },
 };
 
 /** Shapes that are on the map but not watched, and why: said in words a field officer can act on. */
@@ -132,7 +132,7 @@ const instructions = (tool: Tool, picked: number, pts: number): string => {
   return picked ? "Save to mark this shape as not a field." : "Click the shape that is not a field (a road, a house, a threshing yard).";
 };
 
-export default function FieldsMap({ fieldId }: { fieldId?: string }) {
+export default function FieldsMap({ fieldId, overlay }: { fieldId?: string; overlay?: ReactNode }) {
   const [gj, setGj] = useState<FieldsGeoJson | null>(null);
   const [tool, setTool] = useState<Tool | null>(null);
   const [picked, setPicked] = useState<string[]>([]);
@@ -347,15 +347,16 @@ export default function FieldsMap({ fieldId }: { fieldId?: string }) {
           ))}
 
           {pts.length > 0 && (tool === "add" && pts.length >= 3
-            ? <Polygon positions={pts} interactive={false} pathOptions={{ color: "#ffffff", weight: 3, fillColor: "#1B4332", fillOpacity: 0.18 }} />
+            ? <Polygon positions={pts} interactive={false} pathOptions={{ color: "#ffffff", weight: 3, fillColor: "#1E3A6E", fillOpacity: 0.18 }} />
             : <Polyline positions={pts} interactive={false} pathOptions={{ color: "#ffffff", weight: 3, dashArray: tool === "split" ? undefined : "4 6" }} />)}
           {pts.map((p, i) => (
             <CircleMarker key={`pt-${i}`} center={p} radius={i === 0 && tool === "add" && pts.length >= 3 ? 8 : 5} interactive={false}
-              pathOptions={{ color: "#1B4332", weight: 2, fillColor: "#ffffff", fillOpacity: 1 }} />
+              pathOptions={{ color: "#1E3A6E", weight: 2, fillColor: "#ffffff", fillOpacity: 1 }} />
           ))}
 
           {!tool && <Dots gj={gj} nav={nav} />}
         </MapContainer>
+        {overlay && !tool && <div className="fieldsmap-overlay">{overlay}</div>}
       </div>
 
       <figcaption className="fieldsmap-legend">
