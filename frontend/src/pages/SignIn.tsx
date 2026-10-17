@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Compass, ShieldCheck } from "lucide-react";
+import { Compass } from "lucide-react";
 import { api } from "../api";
 import { useSession } from "../session";
 import { Spinner } from "../components/ui";
@@ -22,9 +22,9 @@ function tilesAround([lat, lon]: [number, number]) {
 }
 
 const STEPS = [
-  ["Mark the land you steward", "Search your taluka, then draw around the farms or tap their parcels on the satellite map."],
-  ["Bhumi reads every clear Sentinel-2 pass", "10 m Copernicus Sentinel-2 L2A imagery, sub-field zones, and ERA5 weather for your land."],
-  ["Verify on site & anchor to Sepolia", "Harvests and cloud are filtered out. Every finding is hashed into a SHA-256 Merkle tree for Ethereum Sepolia dMRV."],
+  ["Mark your area", "Search your taluka, then draw around the farms or tap fields on the satellite map."],
+  ["Bhumi watches every clear pass", "Sentinel-2 imagery at 10 m, checked against neighbouring fields and local weather."],
+  ["Visit only where it matters", "Harvests and cloud are filtered out. Every finding is sealed in a tamper-evident record."],
 ];
 
 export default function SignIn() {
@@ -79,32 +79,32 @@ export default function SignIn() {
         <div className="gate-brand">
           <Mark size={30} />
           <span>Bhumi · भूमि</span>
-          <span className="gate-chain-pill"><ShieldCheck size={13} aria-hidden /> Ethereum Sepolia dMRV</span>
+          
         </div>
         <div className="gate-copy">
-          <h1 id="gate-h">Verifiable agro-ecological intelligence before you drive out to the field.</h1>
-          <p>Satellites see a parcel lose its green. Bhumi diagnoses the likely cause, rules out the rest, names the one ground-truth check that settles it, and anchors every piece of evidence into a SHA-256 Merkle tree on Ethereum Sepolia.</p>
+          <h1 id="gate-h">Know which fields need you before you drive out.</h1>
+          <p>When a field loses its green, Bhumi works out the likely cause, rules out the rest, and names the one check on the ground that settles it.</p>
         </div>
         <ol className="gate-steps">
           {STEPS.map(([t, d], i) => (
             <li key={t}><span aria-hidden>{i + 1}</span><div><strong>{t}</strong><small>{d}</small></div></li>
           ))}
         </ol>
-        <p className="gate-credit">Niphad, Nashik · Sentinel-2 10 m &amp; Ethereum Sepolia (11155111) · Imagery © Esri, Maxar</p>
+        <p className="gate-credit">Niphad, Nashik. Imagery © Esri, Maxar</p>
       </section>
 
       <section className="gate-panel" aria-label={mode === "signin" ? "Sign in" : "Create an account"}>
         <div className="gate-form">
-          <h2>{mode === "signin" ? "Enter Observatory" : "Create verifier account"}</h2>
-          <p className="muted">{mode === "signin" ? "Your monitored region, open cases, and dMRV Merkle proofs are ready." : "Next, you will mark the agricultural region you look after."}</p>
+          <h2>{mode === "signin" ? "Sign in" : "Create an account"}</h2>
+          <p className="muted">{mode === "signin" ? "Pick up where you left off, or look around the demo area first." : "Next, you will mark the agricultural region you look after."}</p>
 
           {mode === "signin" && (
             <>
               <button type="button" className="gate-demo" onClick={demo} disabled={!!busy}>
                 {busy === "demo" ? <Spinner size={18} /> : <Compass size={20} aria-hidden />}
-                <span><strong>Explore the Niphad Observatory</strong><small>Niphad, Nashik · 150 real parcels + Sepolia dMRV proofs, no account needed.</small></span>
+                <span><strong>Try the Niphad demo</strong><small>150 real fields in Nashik district. No account needed.</small></span>
               </button>
-              <div className="or"><span>or sign in as verifier</span></div>
+              <div className="or"><span>or sign in</span></div>
             </>
           )}
 

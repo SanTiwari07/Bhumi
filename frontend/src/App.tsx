@@ -85,43 +85,32 @@ function LeftRail() {
         <Mark size={28} />
         <span className="obs-brand-text">
           <span className="obs-brand-title">Bhumi <span className="obs-brand-deva">भूमि</span></span>
-          <span className="obs-brand-sub">dMRV Observatory</span>
+          <span className="obs-brand-sub">Crop health desk</span>
         </span>
       </Link>
 
-      <div className="obs-chain-pill" title="Ethereum Sepolia Testnet (Chain ID 11155111) · SHA-256 Merkle dMRV">
-        <span className="obs-chain-dot" aria-hidden />
-        <span className="obs-chain-info">
-          <strong>Sepolia · 11155111</strong>
-          <small>SHA-256 Merkle dMRV</small>
-        </span>
-      </div>
-
       {ready && (
-        <>
-          <p className="obs-nav-label">Navigate</p>
-          <nav className="obs-nav" aria-label="Main">
-            <NavLink to="/" end>
-              <Compass size={16} aria-hidden />
-              <span>Observatory</span>
-            </NavLink>
-            <NavLink to="/cases">
-              <Layers size={16} aria-hidden />
-              <span>Triage Queue</span>
-            </NavLink>
-            <NavLink to="/ledger">
-              <ShieldCheck size={16} aria-hidden />
-              <span>dMRV Ledger</span>
-            </NavLink>
-          </nav>
-        </>
+        <nav className="obs-nav" aria-label="Main">
+          <NavLink to="/" end>
+            <Compass size={17} aria-hidden />
+            <span>Overview</span>
+          </NavLink>
+          <NavLink to="/cases">
+            <Layers size={17} aria-hidden />
+            <span>Cases</span>
+          </NavLink>
+          <NavLink to="/ledger">
+            <ShieldCheck size={17} aria-hidden />
+            <span>Ledger</span>
+          </NavLink>
+        </nav>
       )}
 
       {area && (
         <div className="obs-region-card" title={area.region}>
-          <span className="obs-region-head"><MapPin size={12} aria-hidden /> Monitored region</span>
+          <span className="obs-region-head"><MapPin size={12} aria-hidden /> Your area</span>
           <strong>{area.name}</strong>
-          <small>{ready && area.fields ? `${area.fields} parcels watched` : ready ? area.region : "Setting up…"}</small>
+          <small>{ready && area.fields ? `${area.fields} fields watched` : ready ? area.region : "Setting up…"}</small>
         </div>
       )}
 

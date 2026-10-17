@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { CheckCircle2, Filter, Layers, Map, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ChevronRight, List, Map } from "lucide-react";
 import { api, InboxRow, Provenance } from "../api";
 import FieldsMap from "../components/FieldsMap";
 import {
@@ -85,163 +85,106 @@ export default function Inbox() {
     );
   }
 
-  const FILTERS: { key: FilterKey; label: string; count: number; dot?: string }[] = [
-    { key: "all", label: "All parcels", count: counts.all },
-    { key: "visit", label: "Needs ground visit", count: counts.visit, dot: "dot-visit" },
-    { key: "watch", label: "Watching", count: counts.watch, dot: "dot-watch" },
-    { key: "area_alert", label: "Area alert", count: counts.area_alert, dot: "dot-area" },
-    { key: "dismissed", label: "Auto-dismissed / Harvest", count: counts.dismissed, dot: "dot-dismissed" },
-    ...(counts.resolved > 0
-      ? [{ key: "resolved" as FilterKey, label: "Resolved", count: counts.resolved }]
-      : []),
+  const FILTERS: { key: FilterKey; label: string; count: number }[] = [
+    { key: "all", label: "All", count: counts.all },
+    { key: "visit", label: "Needs a visit", count: counts.visit },
+    { key: "watch", label: "Watching", count: counts.watch },
+    { key: "area_alert", label: "Area-wide", count: counts.area_alert },
+    { key: "dismissed", label: "Explained", count: counts.dismissed },
+    ...(counts.resolved > 0 ? [{ key: "resolved" as FilterKey, label: "Resolved", count: counts.resolved }] : []),
   ];
 
   return (
     <main className="page">
       <header className="page-head">
         <div>
-          <p className="eyebrow">
-            {data.area} · As of {fmtDate(data.as_of)} · Cryptographic dMRV Triage
+          <h1>Cases</h1>
+          <p className="lede">
+            Every field whose canopy dropped this season in {data.area}, most urgent first. Updated {fmtDate(data.as_of)}.
           </p>
-          <h1>Field Alert &amp; dMRV Attestation Queue</h1>
-          <p className="lede">{data.banner}</p>
         </div>
-
-        <div className="home-head-actions">
-          <div className="seg" role="group" aria-label="View mode">
-            <button
-              type="button"
-              className={view === "list" ? "on" : ""}
-              aria-pressed={view === "list"}
-              onClick={() => setParam("view", null)}
-            >
-              <Layers size={14} aria-hidden /> Triage Queue
+        <div className="head-actions">
+          <div className="seg" role="group" aria-label="View">
+            <button type="button" className={view === "list" ? "on" : ""} aria-pressed={view === "list"} onClick={() => setParam("view", null)}>
+              <List size={15} aria-hidden /> List
             </button>
-            <button
-              type="button"
-              className={view === "map" ? "on" : ""}
-              aria-pressed={view === "map"}
-              onClick={() => setParam("view", "map")}
-            >
-              <Map size={14} aria-hidden /> Satellite Map
+            <button type="button" className={view === "map" ? "on" : ""} aria-pressed={view === "map"} onClick={() => setParam("view", "map")}>
+              <Map size={15} aria-hidden /> Map
             </button>
           </div>
-          <Link to="/ledger" className="btn btn-ghost">
-            <ShieldCheck size={15} aria-hidden /> Sepolia Ledger
-          </Link>
         </div>
       </header>
 
-      <div className="inbox-controls">
-        <div className="inbox-filter-bar" role="toolbar" aria-label="Filter cases by outcome">
-          <Filter size={14} className="muted" aria-hidden />
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              className={`filter-pill ${filter === f.key ? "on" : ""}`}
-              aria-pressed={filter === f.key}
-              onClick={() => setParam("filter", f.key)}
-            >
-              {f.label} <span>{f.count}</span>
-            </button>
-          ))}
-        </div>
+      <div className="filter-tabs" role="toolbar" aria-label="Filter cases">
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            className={filter === f.key ? "on" : ""}
+            aria-pressed={filter === f.key}
+            onClick={() => setParam("filter", f.key)}
+          >
+            {f.label} <span>{f.count}</span>
+          </button>
+        ))}
       </div>
 
       {view === "map" ? (
-        <section className="fieldsmap-wrap" aria-label="Basin parcel map">
+        <section className="fieldsmap-wrap" aria-label="Map of cases">
           <FieldsMap />
         </section>
       ) : rows.length === 0 ? (
-        <p className="empty"><CheckCircle2 size={16} aria-hidden /> No cases match this filter.</p>
+        <p className="empty"><CheckCircle2 size={16} aria-hidden /> No cases here. Pick another filter above.</p>
       ) : (
-        <section className="inbox" aria-label="Prioritized parcel cases">
-          <div className="table-scroll">
-          <div className="inbox-head" aria-hidden>
-            <span className="c-sev">Severity</span>
-            <span className="c-field">Parcel</span>
-            <span className="c-change">Canopy signal</span>
-            <span className="c-lead">Leading cause</span>
-            <span className="c-proof">Merkle proof</span>
-            <span className="c-status">Outcome</span>
+        <section className="case-table" aria-label="Cases">
+          <div className="ct-head" aria-hidden>
+            <span>Field</span>
+            <span>What changed</span>
+            <span>Likely cause</span>
+            <span>Severity</span>
+            <span>Status</span>
           </div>
-
-          <ul className="rows">
-            {rows.map((r) => {
-              const muted = r.outcome === "auto_dismissed";
-              return (
-                <li key={r.id}>
-                  <Link
-                    to={`/case/${r.id}`}
-                    className={`inbox-row ${muted ? "is-dismissed" : ""} ${r.outcome === "resolved" ? "is-resolved" : ""}`}
-                  >
-                    <span className="c-sev">
-                      <SeverityBadge level={r.severity} />
-                    </span>
-
-                    <span className="c-field">
-                      <strong>
-                        {r.field.name}
-                        {r.updated && (
-                          <span className="tag-updated" title="Updated with field officer ground finding">
-                            Ground-attested
-                          </span>
-                        )}
-                      </strong>
-                      <small>
-                        {r.field.area_ha} ha · {r.field.class_label}
-                      </small>
-                    </span>
-
-                    <span className="c-change">
-                      {r.headline ? (
-                        <>
-                          <span className="num">{plainDrop(r.headline.delta, r.headline.zone_label)}</span>
-                          <small>{fmtDate(r.headline.date)}</small>
-                        </>
-                      ) : (
-                        <small>No headline drop</small>
-                      )}
-                    </span>
-
-                    <span className="c-lead">
-                      <span className="lead-name">{r.leading}</span>
-                      {r.confidence && <ConfidenceMeter level={r.confidence} />}
-                      {r.reason && r.reason !== r.leading && <small>{r.reason}</small>}
-                    </span>
-
-                    <span className="c-proof">
-                      <code
-                        className="proof-pill"
-                        title={
-                          r.evidence_root
-                            ? `SHA-256 Evidence Merkle Root: ${r.evidence_root}\nParcel Commitment [IEEE-1]: ${r.parcel_commitment ?? ""}`
-                            : "SHA-256 Merkle Proof"
-                        }
-                      >
-                        <ShieldCheck size={12} aria-hidden />
-                        {r.evidence_root
-                          ? `${r.evidence_root.slice(0, 10)}…${r.evidence_root.slice(-6)}`
-                          : "0xVerified"}
-                      </code>
-                    </span>
-
-                    <span className="c-status">
-                      <StatusBadge outcome={r.outcome} />
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
+          <ul>
+            {rows.map((r) => (
+              <li key={r.id}>
+                <Link
+                  to={`/case/${r.id}`}
+                  className={`ct-row ${r.outcome === "auto_dismissed" ? "is-quiet" : ""}`}
+                >
+                  <span className="ct-field">
+                    <strong>{r.field.name}</strong>
+                    <small>{r.field.area_ha} ha, {r.field.class_label.toLowerCase()}</small>
+                  </span>
+                  <span className="ct-change">
+                    {r.headline ? (
+                      <>
+                        <span>{plainDrop(r.headline.delta, r.headline.zone_label)}</span>
+                        <small>{fmtDate(r.headline.date)}</small>
+                      </>
+                    ) : (
+                      <small>{r.reason}</small>
+                    )}
+                  </span>
+                  <span className="ct-cause">
+                    <span>{r.leading}</span>
+                    {r.confidence && <ConfidenceMeter level={r.confidence} />}
+                  </span>
+                  <span className="ct-sev"><SeverityBadge level={r.severity} /></span>
+                  <span className="ct-status">
+                    <StatusBadge outcome={r.outcome} />
+                    {r.updated && <span className="upd-tag">Field-checked</span>}
+                  </span>
+                  <ChevronRight size={16} className="ct-chev" aria-hidden />
+                </Link>
+              </li>
+            ))}
           </ul>
-          </div>
         </section>
       )}
 
       <footer className="inbox-foot">
         <DataNote
-          text={`Imagery: ${data.provenance.imagery ?? "Sentinel-2 L2A (10 m)"} · Landcover: ${data.provenance.landcover ?? "ESA WorldCover 10 m"} · Boundaries: ${data.provenance.boundaries ?? "Fields of the World"}`}
+          text={`Imagery from ${data.provenance.imagery ?? "Sentinel-2 (10 m)"}. Land cover from ${data.provenance.landcover ?? "ESA WorldCover"}. Field outlines from ${data.provenance.boundaries ?? "Fields of the World"}.`}
         />
       </footer>
     </main>

@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import {
-  BookOpen,
-  CheckCircle2,
-  Download,
-  ExternalLink,
-  FileCheck2,
-  Layers,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { Anchor, CheckCircle2, Download, ExternalLink, FileCheck2 } from "lucide-react";
 import {
   api,
   AreaLedger,
   CaseProof,
   CaseVerification,
-  IeeeReference,
   LedgerEntry,
 } from "../api";
 import { SeverityBadge, Spinner, StatusBadge } from "../components/ui";
+import { fmtDate } from "../lib/format";
 
 declare global {
   interface Window {
@@ -27,33 +18,6 @@ declare global {
     };
   }
 }
-
-const REMOTE_SENSING_IEEE_REFS: IeeeReference[] = [
-  {
-    id: "IEEE-4",
-    authors: "H. Kerner, G. Tseng, I. Becker-Reshef et al.",
-    title: "Fields of The World: A Machine Learning Benchmark Dataset for Global Agricultural Field Boundary Segmentation",
-    venue: "IEEE IGARSS / IEEE JSTARS, 2024",
-    doi: "10.1109/IGARSS53475.2024.10642453",
-    primitive: "10 m Parcel Boundary Segmentation & Edge-Mixing Buffer Suppression",
-  },
-  {
-    id: "IEEE-5",
-    authors: "M. Weiss, F. Jacob, and G. Duveiller",
-    title: "Remote Sensing for Agricultural Applications: A Meta-Review of Multi-Spectral Canopy Vigour & Water Stress Diagnostics",
-    venue: "IEEE Transactions on Geoscience and Remote Sensing (TGRS) / RSE, 2020",
-    doi: "10.1016/j.rse.2019.111402",
-    primitive: "Multi-Spectral NDVI + NDWI Canopy & Moisture Divergence Fusion",
-  },
-  {
-    id: "IEEE-6",
-    authors: "Z. Zhu, S. Wang, and C. E. Woodcock",
-    title: "Improvement and Expansion of the Fmask Algorithm: Cloud, Cloud Shadow, and Snow Detection for Sentinel-2",
-    venue: "IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (JSTARS), 2015",
-    doi: "10.1016/j.rse.2014.12.014",
-    primitive: "SCL Cloud-Screening & Two-Clear-Pass Confirmation Gate",
-  },
-];
 
 export default function Ledger() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -104,15 +68,9 @@ export default function Ledger() {
     try {
       const res = await api.verifyCase(selectedCaseId);
       setVerifyRes(res);
-      setStatusMsg(
-        `Deterministically verified ${res.leaf_count} SHA-256 leaves → Case Evidence Root (${res.evidence_root.slice(
-          0,
-          14,
-        )}…) → Basin Merkle Root (${ledger.area_merkle_root.slice(0, 14)}…).`,
-      );
     } catch (err) {
       setStatusMsg(
-        err instanceof Error ? err.message : "Could not verify Merkle proof.",
+        err instanceof Error ? err.message : "Could not check this proof. Try again.",
       );
     } finally {
       setVerifying(false);
@@ -182,9 +140,7 @@ export default function Ledger() {
         });
         const refreshed = await api.ledger();
         setLedger(refreshed);
-        setStatusMsg(
-          `Anchored Basin Merkle Root on Ethereum Sepolia (11155111)! Transaction: ${txHash}`,
-        );
+        setStatusMsg(`Area root anchored on Sepolia in transaction ${txHash.slice(0, 10)}…${txHash.slice(-6)}.`);
       } else {
         // Zero-setup deterministic relay fallback for judges without browser wallet extension
         const rootSlice = ledger.area_merkle_root.replace(/^0x/, "").slice(0, 32);
@@ -207,15 +163,12 @@ export default function Ledger() {
         const refreshed = await api.ledger();
         setLedger(refreshed);
         setStatusMsg(
-          `Recorded deterministic Sepolia dMRV attestation receipt (${simulatedTx.slice(
-            0,
-            18,
-          )}…) via local Sepolia relay signer.`,
+          "No browser wallet was found, so this anchor was simulated and recorded locally. Install a wallet such as MetaMask to anchor on Sepolia for real.",
         );
       }
     } catch (err) {
       setStatusMsg(
-        err instanceof Error ? err.message : "Failed to anchor on Ethereum Sepolia.",
+        err instanceof Error ? err.message : "Could not anchor the area root. Check your wallet and try again.",
       );
     } finally {
       setAnchoring(false);
@@ -260,78 +213,46 @@ export default function Ledger() {
   const selectedEntry: LedgerEntry | undefined = ledger.entries.find(
     (e) => e.case_id === selectedCaseId,
   );
-  const allIeeeRefs = [...ledger.ieee_references, ...REMOTE_SENSING_IEEE_REFS];
+  const net = ledger.network;
 
   return (
     <main className="page ledger-page">
-      {/* Dark Forest Hero Banner */}
-      <section className="ledger-hero" aria-label="Ethereum Sepolia dMRV Ledger">
+      <header className="page-head">
         <div>
-        <div className="ledger-hero-kicker">
-          <ShieldCheck size={15} aria-hidden />
-          <span>
-            {ledger.network.name} · chainId {ledger.network.chain_id} ({ledger.network.chain_hex}) · BhumiClimateRegistry.sol
-          </span>
+          <h1>Ledger</h1>
+          <p className="lede">
+            Every case in {ledger.area_name} is fingerprinted and combined into one area root that can be anchored on the Ethereum {net.name.replace(/^Ethereum\s*/i, "")}. Pick a case to check its proof.
+          </p>
         </div>
-        <h1>Cryptographic Climate dMRV &amp; Merkle Proof Ledger</h1>
-        <p>
-          Every satellite anomaly dossier in <strong>{ledger.area_name}</strong> ({ledger.region} · {ledger.total_fields} monitored parcels · {ledger.total_cases} active cases) is decomposed into canonical domain-separated SHA-256 leaves, committed with a privacy-preserving geospatial parcel hash [IEEE-1], and rolled up into a single verifiable Ethereum Sepolia state root.
-        </p>
-
-        <div className="ledger-actions-row">
-          <button
-            type="button"
-            className="btn btn-inverse"
-            onClick={handleVerifySelected}
-            disabled={verifying}
-          >
-            <FileCheck2 size={15} aria-hidden />
-            {verifying
-              ? "Recomputing SHA-256 Merkle Tree…"
-              : "Verify Selected Parcel & Basin Merkle Root"}
+        <div className="head-actions">
+          <button type="button" className="btn btn-outline" onClick={handleDownloadProofBundle}>
+            <Download size={16} aria-hidden /> Export JSON
           </button>
-
-          <button
-            type="button"
-            className="btn btn-outline-inverse"
-            onClick={handleAnchorSepolia}
-            disabled={anchoring}
-          >
-            <Sparkles size={15} aria-hidden />
-            {anchoring
-              ? "Signing Sepolia Attestation…"
-              : "Anchor Basin Root on Ethereum Sepolia (11155111)"}
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-outline-inverse"
-            onClick={handleDownloadProofBundle}
-          >
-            <Download size={15} aria-hidden /> Export Verifiable JSON Proof Bundle
+          <button type="button" className="btn btn-primary" onClick={handleAnchorSepolia} disabled={anchoring}>
+            {anchoring ? <Spinner /> : <Anchor size={16} aria-hidden />}
+            {anchoring ? "Anchoring…" : "Anchor area root"}
           </button>
         </div>
-        </div>
+      </header>
 
-        <div className="ledger-hero-hashes">
-          <div className="lh-item">
-            <span>Basin State Merkle Root ({ledger.total_cases} Cases · Depth {ledger.area_tree_depth})</span>
-            <code>{ledger.area_merkle_root}</code>
-          </div>
-          <div className="lh-item">
-            <span>Ground-Truth Attested Parcels</span>
-            <code>
-              {ledger.ground_truth_attested_cases} of {ledger.total_cases} cases updated with field checks
-            </code>
-          </div>
-          <div className="lh-item">
-            <span>Target Smart Contract (Sepolia Testnet)</span>
-            <code>
-              {ledger.network.contract_address} · contracts/BhumiClimateRegistry.sol
-            </code>
-          </div>
+      <dl className="root-strip">
+        <div>
+          <dt>Area root</dt>
+          <dd><code title={ledger.area_merkle_root}>{short(ledger.area_merkle_root, 10, 8)}</code></dd>
         </div>
-      </section>
+        <div>
+          <dt>Cases sealed</dt>
+          <dd>{ledger.total_cases}</dd>
+        </div>
+        <div>
+          <dt>Checked in the field</dt>
+          <dd>{ledger.ground_truth_attested_cases} <small>of {ledger.total_cases}</small></dd>
+        </div>
+        <div>
+          <dt>Network</dt>
+          <dd>Sepolia testnet <small title={net.contract_address}>contract {short(net.contract_address, 6, 4)}</small></dd>
+        </div>
+      </dl>
 
       {statusMsg && (
         <div className="verify-banner" role="status">
@@ -340,16 +261,13 @@ export default function Ledger() {
         </div>
       )}
 
-      {/* Two-Column Proof Inspector */}
       <div className="ledger-grid">
-        {/* LEFT COLUMN: Basin Parcel Merkle Leaves */}
-        <section className="ledger-card" aria-label="Basin parcel leaves">
-          <h2>Basin Parcel Merkle Leaves ({ledger.entries.length})</h2>
-          <p className="ledger-card-sub">
-            Select any parcel leaf to inspect its canonical SHA-256 evidence leaves, privacy commitment [IEEE-1], epoch nullifier [IEEE-2], and Merkle sibling path to the basin root.
-          </p>
-
-          <div className="leaf-selector-list" role="listbox" aria-label="Parcel leaves">
+        <section className="panel-card" aria-labelledby="cases-h">
+          <div className="panel-card-head">
+            <h2 id="cases-h">Cases</h2>
+            <span className="muted small">{ledger.entries.length}</span>
+          </div>
+          <div className="leaf-selector-list" role="listbox" aria-labelledby="cases-h">
             {ledger.entries.map((entry) => {
               const active = entry.case_id === selectedCaseId;
               return (
@@ -361,126 +279,89 @@ export default function Ledger() {
                   className={`leaf-btn ${active ? "on" : ""}`}
                   onClick={() => handleSelectCase(entry.case_id)}
                 >
-                  <div className="leaf-btn-top">
-                    <strong>
-                      {entry.field_name} ({entry.area_ha} ha)
-                    </strong>
+                  <span className="leaf-btn-top">
+                    <strong>{entry.field_name}</strong>
                     <SeverityBadge level={entry.severity} />
-                  </div>
-                  <div className="leaf-btn-meta">
-                    <span>{entry.leading_hypothesis}</span>
-                    <span>·</span>
-                    <span>{entry.leaf_count} leaves</span>
-                    {entry.findings_count > 0 && (
-                      <span className="upd-tag">+{entry.findings_count} field check</span>
-                    )}
-                  </div>
-                  <code>Evidence Root: {entry.evidence_root}</code>
+                  </span>
+                  <span className="leaf-btn-meta">
+                    {entry.leading_hypothesis}
+                    {entry.findings_count > 0 && <span className="upd-tag">Field-checked</span>}
+                  </span>
                 </button>
               );
             })}
           </div>
         </section>
 
-        {/* RIGHT COLUMN: Selected Parcel Cryptographic Proof Inspector */}
-        <section className="ledger-card" aria-label="Parcel cryptographic proof inspector">
+        <section className="panel-card" aria-label="Proof for the selected case">
           {caseProof && selectedEntry ? (
             <div className="proof-inspector">
               <div className="proof-inspector-head">
                 <div>
-                  <h2>
-                    Parcel Proof Inspector: {caseProof.field_name} ({caseProof.case_id})
-                  </h2>
-                  <p className="ledger-card-sub">
-                    UTM Zone <code>{caseProof.parcel.utm_zone}</code> · Quantized 100 m Cell{" "}
-                    <code>{caseProof.parcel.quantized_cell}</code> · {caseProof.parcel.area_ha} ha
+                  <h2>{caseProof.field_name}</h2>
+                  <p className="muted small">
+                    {caseProof.parcel.area_ha} ha, {selectedEntry.class_label.toLowerCase()}. Alert {fmtDate(selectedEntry.alert_date)}.
                   </p>
                 </div>
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <div className="head-actions">
                   <StatusBadge outcome={selectedEntry.outcome} />
-                  <Link to={`/case/${caseProof.case_id}`} className="btn btn-ghost btn-sm">
-                    <Layers size={14} aria-hidden /> Open Dossier
-                  </Link>
+                  <Link to={`/case/${caseProof.case_id}`} className="btn btn-outline btn-sm">Open case</Link>
+                  <button type="button" className="btn btn-primary btn-sm" onClick={handleVerifySelected} disabled={verifying}>
+                    {verifying ? <Spinner /> : <FileCheck2 size={14} aria-hidden />}
+                    {verifying ? "Checking…" : "Verify proof"}
+                  </button>
                 </div>
               </div>
 
               {verifyRes && (
-                <div className="verify-banner" role="status">
+                <div className={`verify-banner ${verifyRes.verified ? "" : "is-bad"}`} role="status">
                   <CheckCircle2 size={16} aria-hidden />
                   <div>
-                    <strong>Deterministic Cryptographic Audit Passed</strong>
-                    <div className="small muted">
-                      All Leaves Valid: <code>{String(verifyRes.all_leaves_valid)}</code> · Nullifier Valid: <code>{String(verifyRes.nullifier_valid)}</code> · Genesis Root Match: <code>{String(verifyRes.genesis_root_matches_satellite_pipeline)}</code>
-                    </div>
+                    <strong>{verifyRes.verified ? "Proof checks out" : "Proof does not match"}</strong>
+                    <p>
+                      Recomputed {verifyRes.leaf_count} fingerprints and the path to the area root.
+                      {verifyRes.all_leaves_valid ? " Every fingerprint matches." : " Some fingerprints differ."}
+                      {verifyRes.nullifier_valid ? " Season marker is valid." : " Season marker is invalid."}
+                    </p>
                   </div>
                 </div>
               )}
 
-              <div className="proof-kv-grid">
-                <div className="proof-kv">
-                  <span>Case Evidence Merkle Root (SHA-256)</span>
-                  <code>{caseProof.evidence_root}</code>
+              <dl className="proof-rows">
+                <ProofRow label="Evidence root" hint="Fingerprint of everything Bhumi knows about this case" value={caseProof.evidence_root} />
+                <ProofRow label="Satellite-only root" hint="The same, before any field visit was recorded" value={caseProof.genesis_evidence_root} />
+                <ProofRow label="Location commitment" hint={`Proves the field's location without revealing it (100 m cell, zone ${caseProof.parcel.utm_zone})`} value={caseProof.parcel.commitment} />
+                <ProofRow label="Season marker" hint="Stops the same field and season being claimed twice" value={caseProof.epoch_nullifier} />
+                <ProofRow label="Attestation" hint="Digest of the case record as signed" value={caseProof.case_attestation_hash} />
+                <div className="proof-row">
+                  <dt>Path to area root<small>{selectedEntry.area_merkle_siblings.length} steps</small></dt>
+                  <dd className="proof-path">
+                    {selectedEntry.area_merkle_siblings.length
+                      ? selectedEntry.area_merkle_siblings.map((hop, i) => (
+                          <code key={i} title={hop.hash}>{hop.position === "left" ? "L" : "R"} {hop.hash.slice(2, 8)}</code>
+                        ))
+                      : <span className="muted">Single case, the root itself</span>}
+                  </dd>
                 </div>
-                <div className="proof-kv">
-                  <span>Genesis Satellite Root (Pre-Field Visit)</span>
-                  <code>{caseProof.genesis_evidence_root}</code>
-                </div>
-                <div className="proof-kv">
-                  <span>Privacy-Preserving Parcel Commitment [IEEE-1]</span>
-                  <code>{caseProof.parcel.commitment}</code>
-                </div>
-                <div className="proof-kv">
-                  <span>Double-Counting Prevention Nullifier [IEEE-2]</span>
-                  <code>{caseProof.epoch_nullifier}</code>
-                </div>
-                <div className="proof-kv">
-                  <span>Case Attestation Digest</span>
-                  <code>{caseProof.case_attestation_hash}</code>
-                </div>
-                <div className="proof-kv">
-                  <span>
-                    Basin Merkle Inclusion Path ({selectedEntry.area_merkle_siblings.length} Sibling Hops)
-                  </span>
-                  <code>
-                    {selectedEntry.area_merkle_siblings
-                      .map((hop) => `${hop.position.toUpperCase()}:${hop.hash.slice(0, 10)}…`)
-                      .join(" → ") || "Single-Leaf Root"}
-                  </code>
-                </div>
-              </div>
+              </dl>
 
               <div>
-                <h3 className="eyebrow" style={{ marginBottom: "8px" }}>
-                  {caseProof.leaves.length} Canonical Domain-Separated SHA-256 Evidence Leaves
-                </h3>
+                <h3 className="sub-h">Evidence fingerprints</h3>
                 <div className="table-scroll">
                   <table className="merkle-leaves-table">
                     <thead>
                       <tr>
-                        <th>Leaf</th>
-                        <th>Tool Domain</th>
-                        <th>Telemetry Step &amp; Canonical JSON Pre-image</th>
-                        <th>SHA-256 Digest</th>
+                        <th scope="col">Ref</th>
+                        <th scope="col">Check</th>
+                        <th scope="col">Fingerprint</th>
                       </tr>
                     </thead>
                     <tbody>
                       {caseProof.leaves.map((leaf) => (
                         <tr key={leaf.id}>
-                          <td>
-                            <strong>{leaf.id}</strong>
-                          </td>
-                          <td>
-                            <code className="hash-pill">{leaf.tool}</code>
-                          </td>
-                          <td>
-                            <strong>{leaf.title}</strong>
-                            <div className="leaf-payload-preview">
-                              <code>{leaf.canonical_json.slice(0, 130)}…</code>
-                            </div>
-                          </td>
-                          <td>
-                            <code className="leaf-hash-cell">{leaf.leaf_hash}</code>
-                          </td>
+                          <td><span className="ev-id">{leaf.id}</span></td>
+                          <td>{leaf.title}</td>
+                          <td><code className="leaf-hash-cell" title={leaf.leaf_hash}>{short(leaf.leaf_hash, 10, 8)}</code></td>
                         </tr>
                       ))}
                     </tbody>
@@ -490,52 +371,28 @@ export default function Ledger() {
 
               {ledger.sepolia_anchors.length > 0 && (
                 <div>
-                  <h3 className="eyebrow" style={{ marginBottom: "8px" }}>
-                    Recorded Ethereum Sepolia Attestations ({ledger.sepolia_anchors.length})
-                  </h3>
+                  <h3 className="sub-h">Anchored on Sepolia</h3>
                   <div className="table-scroll">
                     <table className="merkle-leaves-table">
                       <thead>
                         <tr>
-                          <th>Scope</th>
-                          <th>Transaction Hash</th>
-                          <th>Signer Wallet</th>
-                          <th>Anchored Merkle Root</th>
-                          <th>Timestamp</th>
+                          <th scope="col">Scope</th>
+                          <th scope="col">Transaction</th>
+                          <th scope="col">Signer</th>
+                          <th scope="col">When</th>
                         </tr>
                       </thead>
                       <tbody>
                         {ledger.sepolia_anchors.map((rec) => (
                           <tr key={rec.id}>
+                            <td>{rec.case_id ? `Case ${rec.case_id}` : "Whole area"}</td>
                             <td>
-                              <span className="hash-pill">
-                                {rec.case_id ? `CASE ${rec.case_id}` : "BASIN"} · {rec.chain_id}
-                              </span>
-                            </td>
-                            <td>
-                              <a
-                                href={`${ledger.network.explorer_url}/tx/${rec.tx_hash}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="link-more"
-                              >
-                                <code>
-                                  {rec.tx_hash.slice(0, 14)}…{rec.tx_hash.slice(-8)}
-                                </code>{" "}
-                                <ExternalLink size={12} aria-hidden />
+                              <a href={`${net.explorer_url}/tx/${rec.tx_hash}`} target="_blank" rel="noreferrer" className="link-more">
+                                <code>{short(rec.tx_hash, 8, 6)}</code> <ExternalLink size={12} aria-hidden />
                               </a>
                             </td>
-                            <td>
-                              <code>
-                                {rec.signer.slice(0, 10)}…{rec.signer.slice(-6)}
-                              </code>
-                            </td>
-                            <td>
-                              <code className="leaf-hash-cell">
-                                {rec.merkle_root.slice(0, 16)}…
-                              </code>
-                            </td>
-                            <td className="small muted">{rec.anchored_at}</td>
+                            <td><code title={rec.signer}>{short(rec.signer, 6, 4)}</code></td>
+                            <td className="muted">{rec.anchored_at}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -549,47 +406,17 @@ export default function Ledger() {
           )}
         </section>
       </div>
-
-      {/* IEEE Peer-Reviewed Academic Grounding Section */}
-      <section className="ledger-card" aria-label="IEEE Academic Grounding">
-        <div className="proof-inspector-head">
-          <div>
-            <h2>
-              <BookOpen size={18} aria-hidden style={{ verticalAlign: "-3px", marginRight: "8px" }} />
-              Peer-Reviewed IEEE Research Grounding ({allIeeeRefs.length} Citations)
-            </h2>
-            <p className="ledger-card-sub">
-              Bhumi’s satellite-to-blockchain dMRV pipeline is directly grounded in peer-reviewed <strong>IEEE Access</strong>, <strong>IEEE JSTARS</strong>, and <strong>IEEE TGRS</strong> literature—including foundational blockchain and cryptographic research authored by IEEE ClimateChain Hackathon judges.
-            </p>
-          </div>
-        </div>
-
-        <div className="ieee-citations-grid">
-          {allIeeeRefs.map((ref) => {
-            const isJudgePaper = ref.id === "IEEE-1" || ref.id === "IEEE-2" || ref.id === "IEEE-3";
-            return (
-              <article key={ref.id} className="ieee-card">
-                <div className="ieee-card-tag">
-                  [{ref.id}] {isJudgePaper ? "· Authored by IEEE Hackathon Judge" : "· IEEE Remote Sensing Benchmark"}
-                </div>
-                <h3>{ref.title}</h3>
-                <div className="ieee-card-meta">
-                  {ref.authors} — <em>{ref.venue}</em> ·{" "}
-                  <a
-                    href={`https://doi.org/${ref.doi}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="link-more"
-                  >
-                    DOI: {ref.doi} <ExternalLink size={11} aria-hidden />
-                  </a>
-                </div>
-                <p>{ref.primitive}</p>
-              </article>
-            );
-          })}
-        </div>
-      </section>
     </main>
+  );
+}
+
+const short = (h: string, a: number, b: number) => (h && h.length > a + b + 1 ? `${h.slice(0, a)}…${h.slice(-b)}` : h);
+
+function ProofRow({ label, hint, value }: { label: string; hint: string; value: string }) {
+  return (
+    <div className="proof-row">
+      <dt>{label}<small>{hint}</small></dt>
+      <dd><code title={value}>{short(value, 14, 10)}</code></dd>
+    </div>
   );
 }

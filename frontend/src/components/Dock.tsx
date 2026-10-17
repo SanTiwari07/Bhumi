@@ -24,8 +24,8 @@ export function Dock({ r, onRecord }: { r: CaseResult; onRecord: () => void }) {
           <Clock size={13} aria-hidden /> About {nc.cost_min} minutes. {checkPurpose(nc, names)}
         </p>
         <div className="dock-actions">
-          <button type="button" className="btn btn-inverse" onClick={onRecord}><Pencil size={15} aria-hidden /> Record finding</button>
-          <Link to={`/case/${r.case_id}/check`} className="btn btn-outline-inverse"><ClipboardList size={15} aria-hidden /> Field checklist</Link>
+          <button type="button" className="btn btn-primary" onClick={onRecord}><Pencil size={15} aria-hidden /> Record finding</button>
+          <Link to={`/case/${r.case_id}/check`} className="btn btn-outline"><ClipboardList size={15} aria-hidden /> Field checklist</Link>
         </div>
       </div>
     );
@@ -39,8 +39,8 @@ export function Dock({ r, onRecord }: { r: CaseResult; onRecord: () => void }) {
         <p className="dock-instruction">No single check separates the causes. Start with the cheapest question.</p>
         {ask && <p className="dock-ask">{ask}</p>}
         <div className="dock-actions">
-          {nc && <button type="button" className="btn btn-inverse" onClick={onRecord}><Pencil size={15} aria-hidden /> Record finding</button>}
-          <Link to={`/case/${r.case_id}/check`} className="btn btn-outline-inverse"><ClipboardList size={15} aria-hidden /> Visit checklist</Link>
+          {nc && <button type="button" className="btn btn-primary" onClick={onRecord}><Pencil size={15} aria-hidden /> Record finding</button>}
+          <Link to={`/case/${r.case_id}/check`} className="btn btn-outline"><ClipboardList size={15} aria-hidden /> Visit checklist</Link>
         </div>
       </div>
     );

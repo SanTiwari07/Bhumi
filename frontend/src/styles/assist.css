@@ -5,8 +5,8 @@
 .verdict { padding: 18px 18px 16px; border-radius: var(--r-md); background: var(--canvas-subtle); border-left: 4px solid var(--ink); }
 .verdict h2 { font-size: 25px; line-height: 1.12; font-weight: 650; letter-spacing: -0.025em; margin-top: 6px; text-wrap: balance; color: var(--ink); }
 .verdict p { margin-top: 8px; font-size: 14.5px; line-height: 1.55; color: var(--text); max-width: 60ch; }
-.v-kicker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 0 !important; font-size: 12.5px !important; font-weight: 700; color: var(--text-2) !important; text-transform: uppercase; letter-spacing: 0.03em; }
-.v-case { border-left-color: var(--sev-high); background: var(--sev-high-soft); }
+.v-kicker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 0 !important; font-size: 12.5px !important; font-weight: 700; color: var(--text-2) !important; }
+.v-case { border-left-color: var(--sev-high); }
 .v-unexplained { border-left-color: var(--turmeric); background: var(--turmeric-soft); }
 .v-watch { border-left-color: var(--turmeric); }
 .v-area_alert { border-left-color: var(--area); background: var(--area-soft); }
@@ -16,7 +16,7 @@
 
 .facts { display: grid; grid-template-columns: 1.6fr 1fr 0.7fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
 .facts div { background: var(--canvas); padding: 10px 12px; }
-.facts dt { font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+.facts dt { font-size: 12.5px; color: var(--text-3); font-weight: 600; }
 .facts dd { font-size: 13.5px; font-weight: 600; margin-top: 2px; color: var(--ink); }
 
 .summary h3 { font-size: 14.5px; font-weight: 650; margin-bottom: 8px; color: var(--ink); }

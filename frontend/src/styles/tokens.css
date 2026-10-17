@@ -1,71 +1,71 @@
 :root {
-  /* Bhumi · Botanical Greenery & Earth Stewardship Palette */
-  --canvas:          #FAFCF8;
-  --canvas-subtle:   #F3F7F0;
-  --canvas-sunken:   #E6EFE2;
-  --border:          #CFDFC8;
-  --border-subtle:   #E2ECE0;
-  --border-strong:   #B2CBB0;
+  /* Bhumi · daylight field desk: cool field-paper, white sheets, one field green */
+  --canvas:          #FFFFFF;
+  --canvas-subtle:   #F4F5F1;
+  --canvas-sunken:   #ECEEE8;
+  --border:          #DDE1DA;
+  --border-subtle:   #E9ECE6;
+  --border-strong:   #C3C9C0;
 
-  /* Text: deep botanical forest ink */
-  --text:            #0D2118;
-  --text-2:          #2D4A3B;
-  --text-3:          #526E5F;
-  --text-disabled:   #7A9486;
+  /* Text */
+  --text:            #1D2522;
+  --text-2:          #3F4A45;
+  --text-3:          #5E6A64;
+  --text-disabled:   #949D98;
 
-  /* Canopy & Chlorophyll Brand */
-  --canopy-dark:     #112A1E;
-  --ink:             #1B4332;
-  --ink-hover:       #2D6A4F;
-  --on-ink:          #F4FAF6;
-  --brand:           #2D6A4F;
-  --brand-bright:    #40916C;
-  --brand-leaf:      #52B788;
-  --brand-wash:      #D8F3DC;
-  --turmeric:        #BC6C25;
-  --turmeric-soft:   #FDF0E2;
-  --turmeric-ink:    #7C3F0E;
-  --focus:           #40916C;
+  /* Brand: one field green, used for actions and healthy canopy */
+  --canopy-dark:     #1D2522;
+  --ink:             #2F6B4A;
+  --ink-hover:       #255A3D;
+  --on-ink:          #FFFFFF;
+  --brand:           #2F6B4A;
+  --brand-bright:    #3C8459;
+  --brand-leaf:      #6FAF84;
+  --brand-wash:      #EAF3EC;
+  --turmeric:        #B7791F;
+  --turmeric-soft:   #FBF4E6;
+  --turmeric-ink:    #7A4E0E;
+  --focus:           #2F6B4A;
 
-  /* Severity & Ecological Alert Semantics */
-  --sev-high:        #B91C1C;
-  --sev-high-soft:   #FEF2F2;
-  --sev-high-border: #FECACA;
+  /* Severity */
+  --sev-high:        #B42318;
+  --sev-high-soft:   #FDF1F0;
+  --sev-high-border: #F5C9C4;
 
-  --sev-medium:      #B45309;
-  --sev-medium-soft: #FFFBEB;
-  --sev-medium-border:#FDE68A;
+  --sev-medium:      #A15C07;
+  --sev-medium-soft: #FDF6E8;
+  --sev-medium-border:#F1D9A8;
 
-  --sev-low:         #1B4332;
-  --sev-low-soft:    #E6F4EA;
-  --sev-low-border:  #B7E4C7;
+  --sev-low:         #2F6B4A;
+  --sev-low-soft:    #EAF3EC;
+  --sev-low-border:  #C5DFCC;
 
-  /* Area-wide signal: monsoon slate-teal */
-  --area:            #1E607A;
-  --area-soft:       #E6F3F8;
-  --area-border:     #B3D9E8;
+  /* Area-wide signal: slate blue */
+  --area:            #2F6690;
+  --area-soft:       #EDF3F8;
+  --area-border:     #C6D8E6;
 
   /* Evidence polarity */
-  --ev-for:          #2D6A4F;
-  --ev-against:      #526358;
-  --ev-context:      #6B7F73;
+  --ev-for:          #2F6B4A;
+  --ev-against:      #6B5B4E;
+  --ev-context:      #A3ABA6;
 
   /* Scene quality */
-  --q-usable:        #2D6A4F;
-  --q-partial:       #B45309;
-  --q-cloudy:        #7A9486;
+  --q-usable:        #2F6B4A;
+  --q-partial:       #A15C07;
+  --q-cloudy:        #949D98;
 
   /* Typography */
-  --display: "Fraunces", Georgia, serif;
-  --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
+  --font: "Figtree Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
-  /* Radii & Elevation */
+  /* Radii & Elevation: borders do the work, shadows only for floating things */
   --r-sm: 6px;
-  --r-md: 12px;
-  --r-lg: 16px;
-  --raised:  0 2px 6px rgba(17, 42, 30, 0.06), 0 1px 2px rgba(17, 42, 30, 0.04);
-  --overlay: 0 14px 34px rgba(17, 42, 30, 0.14), 0 3px 10px rgba(17, 42, 30, 0.08);
+  --r-md: 10px;
+  --r-lg: 12px;
+  --raised:  none;
+  --overlay: 0 12px 32px rgba(29, 37, 34, 0.14), 0 2px 8px rgba(29, 37, 34, 0.08);
 
   /* Motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);

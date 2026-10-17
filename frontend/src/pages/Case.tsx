@@ -4,13 +4,9 @@ import {
   ArrowLeft,
   CheckCircle2,
   ClipboardList,
-  ExternalLink,
-  FileCheck2,
   Layers,
-  MessageCircleQuestion,
   Pencil,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { api, CaseProof, CaseVerification, MapData, SeriesData } from "../api";
 import { useInvestigation } from "../hooks";
@@ -80,102 +76,49 @@ export default function Case() {
     );
   }
 
-  const evidenceRoot = proof?.evidence_root ?? "";
-  const parcelCommitment = proof?.parcel.commitment ?? "";
-  const epochNullifier = proof?.epoch_nullifier ?? "";
+  const dockHasActions = (r.outcome === "field_case" && !!r.next_check) || r.outcome === "unexplained";
 
   return (
     <main className="case-shell">
-      {/* Top Parcel Identification & Action Bar */}
       <header className="case-bar">
         <div className="case-bar-left">
           <Link to="/cases" className="back">
-            <ArrowLeft size={15} aria-hidden /> Queue
+            <ArrowLeft size={15} aria-hidden /> Cases
           </Link>
-          <span className="sep" aria-hidden>/</span>
-          <h1>{r.field.name}</h1>
-          <span className="case-meta">
-            {r.field.area_ha} ha · {r.field.class_label} · Alert {fmtDate(r.alert_date)}
-          </span>
-          <SeverityBadge level={r.severity} />
-          <StatusBadge outcome={r.outcome} />
+          <div className="case-title">
+            <h1>{r.field.name}</h1>
+            <SeverityBadge level={r.severity} />
+            <StatusBadge outcome={r.outcome} />
+          </div>
+          <p className="case-meta">
+            {r.field.area_ha} ha, {r.field.class_label.toLowerCase()}. Alert raised {fmtDate(r.alert_date)}.
+          </p>
         </div>
 
         <div className="case-bar-right">
-          {r.next_check && (
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={() => setRecording(true)}
-            >
+          <button
+            type="button"
+            className={`btn btn-outline btn-sm ${verifyRes?.verified ? "is-verified" : ""}`}
+            onClick={handleVerify}
+            disabled={verifying}
+            title="Recompute this case's fingerprints and check them against the ledger"
+          >
+            {verifying ? <Spinner size={12} /> : verifyRes?.verified ? <CheckCircle2 size={14} aria-hidden /> : <ShieldCheck size={14} aria-hidden />}
+            {verifying ? "Checking…" : verifyRes?.verified ? "Proof verified" : "Verify proof"}
+          </button>
+          {/* the action dock already offers these for open and unexplained cases */}
+          {!dockHasActions && r.next_check && (
+            <button type="button" className="btn btn-outline btn-sm" onClick={() => setRecording(true)}>
               <Pencil size={14} aria-hidden /> Record finding
             </button>
           )}
-          <Link to={`/case/${r.case_id}/check`} className="btn btn-primary btn-sm">
-            <ClipboardList size={14} aria-hidden /> Field checklist
-          </Link>
+          {!dockHasActions && (
+            <Link to={`/case/${r.case_id}/check`} className="btn btn-outline btn-sm">
+              <ClipboardList size={14} aria-hidden /> Field checklist
+            </Link>
+          )}
         </div>
       </header>
-
-      {/* Top Cryptographic Proof & Ethereum Sepolia Attestation Bar */}
-      <section className="case-proof-bar" aria-label="Cryptographic dMRV Proof Bar">
-        <div className="cpb-left">
-          <span className="cpb-chip">
-            <ShieldCheck size={13} aria-hidden /> Sepolia · 11155111
-          </span>
-          {evidenceRoot && (
-            <span className="cpb-kv" title={evidenceRoot}>
-              <strong>Evidence Root:</strong>
-              <code>{evidenceRoot.slice(0, 12)}…{evidenceRoot.slice(-8)}</code>
-            </span>
-          )}
-          {parcelCommitment && (
-            <span className="cpb-kv" title={`Privacy-Preserving Parcel Commitment [IEEE-1]: ${parcelCommitment}`}>
-              <strong>Parcel Commitment [IEEE-1]:</strong>
-              <code>{parcelCommitment.slice(0, 10)}…{parcelCommitment.slice(-6)}</code>
-            </span>
-          )}
-          {epochNullifier && (
-            <span className="cpb-kv" title={`Epoch Nullifier [IEEE-2]: ${epochNullifier}`}>
-              <strong>Nullifier [IEEE-2]:</strong>
-              <code>{epochNullifier.slice(0, 10)}…{epochNullifier.slice(-6)}</code>
-            </span>
-          )}
-        </div>
-
-        <div className="cpb-right">
-          <button
-            type="button"
-            className={`cpb-btn ${verifyRes?.verified ? "verified" : ""}`}
-            onClick={handleVerify}
-            disabled={verifying}
-          >
-            {verifying ? (
-              <>
-                <Spinner size={12} /> Recomputing SHA-256…
-              </>
-            ) : verifyRes?.verified ? (
-              <>
-                <CheckCircle2 size={13} aria-hidden /> Verified ({proof?.leaves.length ?? 5} leaves + Basin Root)
-              </>
-            ) : (
-              <>
-                <FileCheck2 size={13} aria-hidden /> Verify SHA-256 Proof
-              </>
-            )}
-          </button>
-          <button
-            type="button"
-            className="cpb-btn"
-            onClick={() => setTab("dmrv")}
-          >
-            Inspect Leaves
-          </button>
-          <Link to={`/ledger?case=${r.case_id}`} className="cpb-btn">
-            Sepolia Ledger <ExternalLink size={12} aria-hidden />
-          </Link>
-        </div>
-      </section>
 
       {/* Mirrored Split Studio: Left Dossier Panel + Right Sticky Multi-Spectral Map Deck */}
       <div className="workspace">
@@ -215,7 +158,7 @@ export default function Case() {
               className={tab === "dmrv" ? "on" : ""}
               onClick={() => setTab("dmrv")}
             >
-              <ShieldCheck size={13} aria-hidden /> dMRV Proof
+              Proof
             </button>
             <button
               type="button"
@@ -224,7 +167,7 @@ export default function Case() {
               className={tab === "ask" ? "on" : ""}
               onClick={() => setTab("ask")}
             >
-              <MessageCircleQuestion size={13} aria-hidden /> Ask
+              Ask Bhumi
             </button>
           </nav>
 
@@ -257,72 +200,58 @@ export default function Case() {
             )}
 
             {tab === "dmrv" && (
-              <section className="rail-section" aria-label="Cryptographic dMRV proof breakdown">
+              <section className="rail-section" aria-labelledby="proof-h">
                 <div>
-                  <h2>Cryptographic dMRV Proof &amp; Merkle Tree</h2>
+                  <h2 id="proof-h">Proof</h2>
                   <p className="section-sub">
-                    Every telemetry step in {r.field.name} is canonically serialized and hashed with domain-separated SHA-256 (`bhumi:leaf:v1`) for Ethereum Sepolia verification.
+                    Each check on {r.field.name} is fingerprinted, and the fingerprints are combined into one evidence root. Change any piece of evidence and the root no longer matches.
                   </p>
                 </div>
 
                 {verifyRes && (
-                  <div className="verify-banner" role="status">
+                  <div className={`verify-banner ${verifyRes.verified ? "" : "is-bad"}`} role="status">
                     <CheckCircle2 size={16} aria-hidden />
                     <div>
-                      <strong>Deterministic Verification Passed</strong>
-                      <p className="small muted">
-                        All Leaves Valid: {String(verifyRes.all_leaves_valid)} · Nullifier Valid: {String(verifyRes.nullifier_valid)} · Root: <code>{verifyRes.evidence_root.slice(0, 18)}…</code>
+                      <strong>{verifyRes.verified ? "Proof checks out" : "Proof does not match"}</strong>
+                      <p>
+                        {verifyRes.all_leaves_valid ? "Every fingerprint matches." : "Some fingerprints differ."}{" "}
+                        {verifyRes.nullifier_valid ? "Season marker is valid." : "Season marker is invalid."}
                       </p>
                     </div>
                   </div>
                 )}
 
                 {proof ? (
-                  <div className="dmrv-panel-stack">
-                    <div className="proof-kv-grid">
-                      <div className="proof-kv">
-                        <span>Case Evidence Merkle Root</span>
-                        <code>{proof.evidence_root}</code>
-                      </div>
-                      <div className="proof-kv">
-                        <span>Genesis Satellite Root (Pre-Visit)</span>
-                        <code>{proof.genesis_evidence_root}</code>
-                      </div>
-                      <div className="proof-kv">
-                        <span>Privacy-Preserving Parcel Commitment [IEEE-1]</span>
-                        <code>{proof.parcel.commitment}</code>
-                        <small className="muted">
-                          Quantized Cell: {proof.parcel.quantized_cell} ({proof.parcel.utm_zone}) · {proof.parcel.area_ha} ha
-                        </small>
-                      </div>
-                      <div className="proof-kv">
-                        <span>Epoch Anti-Double-Counting Nullifier [IEEE-2]</span>
-                        <code>{proof.epoch_nullifier}</code>
-                      </div>
-                    </div>
-
-                    <h3 className="eyebrow" style={{ marginTop: "14px" }}>
-                      {proof.leaves.length} Canonical SHA-256 Evidence Leaves
-                    </h3>
-                    <ul className="dmrv-leaf-list">
-                      {proof.leaves.map((leaf) => (
-                        <li key={leaf.id} className="dmrv-leaf-item">
-                          <div className="dmrv-leaf-head">
-                            <span className="ev-id">{leaf.id}</span>
-                            <strong>{leaf.title}</strong>
-                            <code className="hash-pill">{leaf.tool}</code>
-                          </div>
-                          <code className="dmrv-leaf-hash">{leaf.leaf_hash}</code>
-                        </li>
+                  <>
+                    <dl className="proof-rows">
+                      {[
+                        ["Evidence root", proof.evidence_root],
+                        ["Satellite-only root", proof.genesis_evidence_root],
+                        ["Location commitment", proof.parcel.commitment],
+                        ["Season marker", proof.epoch_nullifier],
+                      ].map(([label, value]) => (
+                        <div className="proof-row" key={label}>
+                          <dt>{label}</dt>
+                          <dd><code title={value}>{value.slice(0, 10)}…{value.slice(-8)}</code></dd>
+                        </div>
                       ))}
-                    </ul>
+                    </dl>
 
-                    <div style={{ marginTop: "12px" }}>
-                      <Link to={`/ledger?case=${r.case_id}`} className="btn btn-primary btn-sm">
-                        <Sparkles size={14} aria-hidden /> Open in Full Sepolia Ledger &amp; Anchor On-Chain
-                      </Link>
+                    <div>
+                      <h3 className="sub-h">{proof.leaves.length} evidence fingerprints</h3>
+                      <ul className="dmrv-leaf-list">
+                        {proof.leaves.map((leaf) => (
+                          <li key={leaf.id} className="dmrv-leaf-item">
+                            <span className="ev-id">{leaf.id}</span>
+                            <span className="dmrv-leaf-title">{leaf.title}</span>
+                            <code title={leaf.leaf_hash}>{leaf.leaf_hash.slice(0, 8)}…{leaf.leaf_hash.slice(-4)}</code>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
+
+                    <Link to={`/ledger?case=${r.case_id}`} className="more">Open in the ledger</Link>
+                  </>
                 ) : (
                   <div className="center-spin"><Spinner size={18} /></div>
                 )}
