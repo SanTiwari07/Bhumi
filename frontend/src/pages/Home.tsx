@@ -7,6 +7,9 @@ import FieldsMap from "../components/FieldsMap";
 import { SeverityBadge, Spinner } from "../components/ui";
 import { fmtDate, plainDrop } from "../lib/format";
 
+// as many as sit on the map without the card scrolling; "All n" opens the rest
+const VISIT_FIRST = 4;
+
 function Building({ areaName }: { areaName: string }) {
   const { set, refresh } = useSession();
   const nav = useNavigate();
@@ -153,7 +156,7 @@ function Briefing() {
         <p className="empty"><CheckCircle2 size={16} aria-hidden /> No field needs a visit right now.</p>
       ) : (
         <ol className="visit-list-home">
-          {h.top.map((r) => (
+          {h.top.slice(0, VISIT_FIRST).map((r) => (
             <li key={r.id}>
               <Link to={`/case/${r.id}`}>
                 <span className="fid">{r.field.id}</span>

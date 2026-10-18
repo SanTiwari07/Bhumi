@@ -17,11 +17,9 @@ select.input { padding-right: 28px; }
 .link-btn:hover { color: var(--text); }
 .center-spin { display: grid; place-items: center; min-height: 40vh; }
 
-/* ---------- quiet scrollbars ---------- */
-.panel-body, .setup-panel { scrollbar-width: thin; scrollbar-color: transparent transparent; }
-.panel-body:hover, .setup-panel:hover { scrollbar-color: var(--border-strong) transparent; }
-body:has(.case-shell) { overflow: hidden; }
-@media (max-width: 1023px) { body:has(.case-shell) { overflow: auto; } }
+/* ---------- full-height screens: only their inner panels scroll ---------- */
+body:has(.case-shell), body:has(.setup) { overflow: hidden; }
+@media (max-width: 1023px) { body:has(.case-shell), body:has(.setup) { overflow: auto; } }
 
 /* ---------- user menu in left sidebar ---------- */
 .menu { position: relative; }
@@ -326,14 +324,14 @@ body:has(.case-shell) { overflow: hidden; }
 .filter-tabs button.on { background: var(--canvas); border-color: var(--border-strong); color: var(--text); font-weight: 600; }
 .filter-tabs button.on span { color: var(--ink); font-weight: 600; }
 
-.case-table { background: var(--canvas); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.case-table { background: var(--canvas); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: clip; }
 .ct-head, .ct-row {
   display: grid;
   grid-template-columns: minmax(150px, 1fr) minmax(200px, 1.4fr) minmax(200px, 1.4fr) 104px 150px 16px;
   gap: 20px;
   align-items: center;
 }
-.ct-head { padding: 10px 20px; font-size: 12.5px; font-weight: 600; color: var(--text-2); background: var(--canvas-subtle); border-bottom: 2px solid var(--ink); }
+.ct-head { position: sticky; top: 0; z-index: 2; padding: 10px 20px; font-size: 12.5px; font-weight: 600; color: var(--text-2); background: var(--canvas-subtle); border-bottom: 2px solid var(--ink); }
 .case-table li + li { border-top: 1px solid var(--border-subtle); }
 .ct-row { padding: 14px 20px; transition: background var(--fast) var(--ease); }
 .ct-row:hover { background: var(--canvas-subtle); }
@@ -367,7 +365,9 @@ body:has(.case-shell) { overflow: hidden; }
 .root-strip dd small { font-family: var(--font); font-size: 12.5px; font-weight: 500; color: var(--text-3); }
 
 .ledger-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start; }
-.leaf-selector-list { display: flex; flex-direction: column; max-height: 640px; overflow-y: auto; margin: 0 -8px; padding: 0 8px; scrollbar-width: thin; }
+/* the case list rides beside the proof as the page scrolls, sized to the window, so there is one long scroll, not two */
+.ledger-grid > .panel-card:first-child { position: sticky; top: 24px; }
+.leaf-selector-list { display: flex; flex-direction: column; max-height: calc(100dvh - 128px); overflow-y: auto; margin: 0 -8px; padding: 0 8px 16px; overscroll-behavior: contain; mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent); }
 .leaf-btn {
   width: 100%; text-align: left;
   display: flex; flex-direction: column; gap: 2px;
@@ -416,6 +416,7 @@ body:has(.case-shell) { overflow: hidden; }
 @media (max-width: 1180px) {
   .home-lower { grid-template-columns: 1fr; }
   .ledger-grid { grid-template-columns: 1fr; }
+  .ledger-grid > .panel-card:first-child { position: static; }
   .leaf-selector-list { max-height: 320px; }
   .ct-head, .ct-row { grid-template-columns: minmax(130px, 1fr) minmax(170px, 1.3fr) minmax(170px, 1.3fr) 96px 130px 16px; gap: 14px; }
 }

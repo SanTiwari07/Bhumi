@@ -2,6 +2,10 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+
+/* scroll stays, the bar does not: wheel, touch and keyboard still move every region */
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
 body {
   font-family: var(--font);
   font-size: 15px;
@@ -651,8 +655,7 @@ h3, .h3 { font-size: 15px; line-height: 1.4;  font-weight: 600; letter-spacing: 
   .page { padding: 18px 16px 64px; }
   .steps { grid-template-columns: 1fr 1fr; }
   .obs-sidebar { padding: 10px 16px 8px; gap: 8px 12px; }
-  .obs-nav { order: 3; flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
-  .obs-nav::-webkit-scrollbar { display: none; }
+  .obs-nav { order: 3; flex: 1 1 100%; overflow-x: auto; }
   .obs-nav a { white-space: nowrap; flex: none; }
   .obs-footer { margin-left: auto; }
   .slip .btn, .close-form .btn { width: 100%; }
