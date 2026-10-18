@@ -125,7 +125,7 @@ function MapHandle({ onMap }: { onMap: (m: L.Map) => void }) {
   return null;
 }
 
-const pct = (v: number | null | undefined) => (v === null || v === undefined ? "–" : `${Math.round(v * 100)}%`);
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "-" : `${Math.round(v * 100)}%`);
 
 function Overview({ place, summary, error, onGo }: {
   place: Place;

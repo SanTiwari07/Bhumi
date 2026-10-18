@@ -140,10 +140,10 @@ export function CloseCaseForm({ r, onSaved, large = false }: { r: CaseResult; on
 }
 
 const MOVES: Record<Movement, { glyph: string; word: string }> = {
-  more_likely: { glyph: "↑", word: "More likely" },
-  less_likely: { glyph: "↓", word: "Less likely" },
-  ruled_out: { glyph: "✕", word: "Ruled out" },
-  newly_considered: { glyph: "+", word: "Newly considered" },
+  more_likely: { glyph: "+", word: "More likely" },
+  less_likely: { glyph: "-", word: "Less likely" },
+  ruled_out: { glyph: "x", word: "Ruled out" },
+  newly_considered: { glyph: "*", word: "Newly considered" },
   unchanged: { glyph: "=", word: "Unchanged" },
 };
 
@@ -169,7 +169,7 @@ export function InvestigationUpdate({ r }: { r: CaseResult }) {
             <div className="um-row">
               <MoveChip m={m.movement} />
               <strong>{m.name}</strong>
-              <span className="um-rank">{m.before_rank === m.after_rank ? `#${m.after_rank}` : `#${m.before_rank} → #${m.after_rank}`}</span>
+              <span className="um-rank">{m.before_rank === m.after_rank ? `#${m.after_rank}` : `#${m.before_rank} to #${m.after_rank}`}</span>
             </div>
             <p className="um-reason">{m.reason} {m.evidence_ids.length > 0 && <Refs ids={m.evidence_ids} />}</p>
           </li>

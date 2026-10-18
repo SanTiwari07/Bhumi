@@ -41,7 +41,7 @@ const SEV = {
 } as const;
 
 export function SeverityBadge({ level }: { level: Severity | null }) {
-  if (!level) return <span className="sev sev-none" aria-label="No severity">&ndash;</span>;
+  if (!level) return <span className="sev sev-none" aria-label="No severity">-</span>;
   const { Icon, word } = SEV[level];
   return (
     <span className={`badge sev sev-${level}`}>

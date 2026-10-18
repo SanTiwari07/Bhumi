@@ -105,7 +105,7 @@ def run(ctx: Ctx) -> ToolResult:
             f"ΔNDVI {fmt_delta(vals[worst])} against {fmt_delta(interior)} in the interior."
         )
     elif pattern == "spreading":
-        trail = " → ".join(str(c) for _, c in counts[-3:])
+        trail = " then ".join(str(c) for _, c in counts[-3:])
         finding = (
             f"A patch that grows across scenes: anomalous zones {trail}. Now {', '.join(names)} "
             f"({affected_px} of {total_px} pixels)."
