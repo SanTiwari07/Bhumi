@@ -180,13 +180,13 @@ python -m uvicorn app.main:app --app-dir backend --port 8000
 
 ```bash
 # 3. Frontend, in a second terminal: dev server on http://localhost:5173
-npm --prefix frontend install
+npm ci --prefix frontend
 npm --prefix frontend run dev
 ```
 
 ```bash
 # 4. Optional: compile the contract and test it in an in-memory EVM (nothing is deployed)
-npm --prefix contracts install
+npm ci --prefix contracts
 npm --prefix contracts test
 ```
 
