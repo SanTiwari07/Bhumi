@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 /**
  * @title BhumiClimateRegistry
  * @notice Decentralized Measurement, Reporting, and Verification (dMRV) Registry
- *         for the IEEE ClimateChain Global Hackathon 2026 (Ethereum Sepolia Testnet, chainId: 11155111).
+ *         for Bhumi field records (Ethereum Sepolia Testnet, chainId: 11155111).
  *
  * @dev Implements three peer-reviewed IEEE cryptographic primitives:
  *   1. Privacy-Preserving Geospatial Parcel Commitments [IEEE-1]:

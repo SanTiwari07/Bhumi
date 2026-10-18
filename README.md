@@ -7,7 +7,6 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/track-Climate%20Data%20%26%20Environmental%20Monitoring-1E3A6E?style=flat-square" alt="Track: Climate Data and Environmental Monitoring" />
   <img src="https://img.shields.io/badge/imagery-Sentinel--2%20%C2%B7%2010%20m-177E89?style=flat-square" alt="Sentinel-2, 10 m" />
   <img src="https://img.shields.io/badge/ledger-Ethereum%20Sepolia-E3A008?style=flat-square" alt="Ethereum Sepolia" />
   <img src="https://img.shields.io/badge/tests-70%20passing-2F6B4A?style=flat-square" alt="70 tests passing" />
@@ -28,7 +27,6 @@
   <img src="docs/screens/02-overview.jpg" alt="Bhumi overview for Niphad, Nashik: a satellite map of 150 watched fields with a Visit first list of the five most urgent fields, how the 68 alerts were explained, and the sealed ledger summary" width="100%" />
 </p>
 
-> **IEEE ClimateChain Global Hackathon 2026** · Track: **Climate Data & Environmental Monitoring**, bridging into **Carbon Markets & Emissions Transparency**.
 > Everything in the screenshots runs on real Sentinel-2 imagery and Open-Meteo weather for 150 fields in Niphad, Nashik (Maharashtra, India).
 
 ---
@@ -39,7 +37,7 @@ Environmental monitoring has two weak links, and climate programmes need both fi
 
 **1. A red patch is not a diagnosis.** Sentinel-2 photographs every field on Earth about every five days for free. When a field loses its green, the picture cannot say whether it is cloud, a harvest on schedule, a heatwave hitting the whole district, or a failing drip line on one farm. Field officers, who each look after hundreds of farms, cannot visit every alert, so they stop trusting the alerts.
 
-**2. Monitoring records are easy to bend.** Soil-carbon, water-stewardship and crop-insurance schemes all depend on field records. Kept in an ordinary database, those records can be edited after the fact, cherry-picked to the good satellite passes, or claimed twice for the same field and season. That is exactly the double-counting and verification problem the carbon-market track describes.
+**2. Monitoring records are easy to bend.** Soil-carbon, water-stewardship and crop-insurance schemes all depend on field records. Kept in an ordinary database, those records can be edited after the fact, cherry-picked to the good satellite passes, or claimed twice for the same field and season. That is the double-counting and verification problem carbon markets keep running into.
 
 In the shipped Niphad demo area, **68 of 150 fields** raised an alert in three weeks. Bhumi explained **42** without anyone leaving the office. The other **26** arrive with a likely cause, what else it could be, and one cheap check to do on site.
 
@@ -153,15 +151,15 @@ All of this lives in [`backend/app/blockchain.py`](backend/app/blockchain.py) an
 - **Monitoring data a registry can trust.** Sealed, field-checked records with a double-counting guard are what soil-carbon, water-stewardship and parametric-insurance programmes need before they can pay smallholders.
 - **Built to scale.** The imagery is free and global, field boundaries come from Fields of the World, and an officer can mark a new area by searching a taluka and drawing around the farms. Nothing is tuned to Niphad.
 
-## How Bhumi meets the judging criteria
+## At a glance
 
-| Criterion | Where to look |
+| Area | What Bhumi brings |
 |---|---|
 | **Climate impact** | Real Sentinel-2 monitoring of 150 smallholder fields; earlier, targeted action on crop stress; trusted records for carbon and water programmes. |
-| **Innovation and creativity** | Differential diagnosis on satellite alerts, a computed next best check, and a Merkle-sealed evidence trail where a field visit visibly changes the root. |
-| **Technical execution** | FastAPI and React app on real data, 7 evidence tools, an 11-cause rule engine, SHA-256 Merkle proofs with in-app verification, Sepolia anchoring, a Solidity registry, and 70 passing tests. |
-| **Practical usefulness** | Works on a phone, needs no API key, explains every dismissal, and uses only free global data, so a farmer producer organisation could run it tomorrow. |
-| **Presentation** | The screens above walk from problem to proof; the Proof tab and Ledger let a judge verify a case in one click. |
+| **What is new** | Differential diagnosis on satellite alerts, a computed next best check, and a Merkle-sealed evidence trail where a field visit visibly changes the root. |
+| **Under the hood** | FastAPI and React app on real data, 7 evidence tools, an 11-cause rule engine, SHA-256 Merkle proofs with in-app verification, Sepolia anchoring, a Solidity registry, and 70 passing tests. |
+| **Practical use** | Works on a phone, needs no API key, explains every dismissal, and uses only free global data, so a farmer producer organisation could run it tomorrow. |
+| **Verifiable** | The Proof tab and Ledger let anyone check a case against the area root in one click. |
 
 ## Run it
 
@@ -244,7 +242,7 @@ These peer-reviewed papers shaped the proof design. Bhumi implements the simple 
 
 ## Lineage
 
-Bhumi builds on [FieldDX](https://github.com/SanTiwari07/FieldDX), the same author's earlier satellite crop-diagnosis project. The diagnosis engine and data pipeline come from FieldDX. New for this hackathon: the tamper-evident proof layer (evidence leaves, Merkle roots, location commitment, season marker, area root, in-app verification), Sepolia anchoring, the `BhumiClimateRegistry` contract, the ledger, and a redesigned interface.
+Bhumi builds on [FieldDX](https://github.com/SanTiwari07/FieldDX), the same author's earlier satellite crop-diagnosis project. The diagnosis engine and data pipeline come from FieldDX. New in Bhumi: the tamper-evident proof layer (evidence leaves, Merkle roots, location commitment, season marker, area root, in-app verification), Sepolia anchoring, the `BhumiClimateRegistry` contract, the ledger, and a redesigned interface.
 
 ## License
 
