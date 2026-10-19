@@ -5,13 +5,6 @@
 
 # local planning & notes
 IMPLEMENTATION_PLAN.md
-WHAT_TO_DO_FOR_THIS_HACKATHON.md
-devpost/
-.agents/
-.claude/
-agent/
-skills-lock.json
-.graphifyignore
 docs/idea.md
 docs/screenshots/
 docs/brand/banner.jpg
@@ -28,9 +21,6 @@ venv/
 # node
 node_modules/
 dist/
-
-# knowledge graph build output
-graphify-out/
 
 # os / editor
 .DS_Store
