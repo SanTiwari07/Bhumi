@@ -27,6 +27,8 @@
   <img src="docs/screens/02-overview.jpg" alt="Bhumi overview for Niphad, Nashik: a satellite map of 150 watched fields with a Visit first list of the five most urgent fields, how the 68 alerts were explained, and the sealed ledger summary" width="100%" />
 </p>
 
+> **Track:** Climate Data & Environmental Monitoring.
+>
 > Everything in the screenshots runs on real Sentinel-2 imagery and Open-Meteo weather for 150 fields in Niphad, Nashik (Maharashtra, India).
 
 ---
