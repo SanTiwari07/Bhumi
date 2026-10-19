@@ -86,17 +86,18 @@ UNIFORM_SPREAD = 0.05
 EDGE_GAP = 0.08
 
 # ---- weather
-DRY_SPELL_MM = 5.0          # less than this in 10 days
-RAIN_WINDOW_MM = 15.0       # at least this in 14 days counts as rain in the window
-HEAVY_RAIN_MM = 50.0        # a single day
-HEAT_C = 38.0
-HEAT_DAYS = 3
-HUMID_RH = 85.0
-HUMID_DAYS = 3
-HUMID_RAIN_MM = 20.0        # rain in the 10 days before onset
-SOIL_LOW = -0.04            # 7-day mean minus 60-day mean, m3/m3
-WINDOW_DAYS = 14
-RAIN_RECENT_MM = 5.0        # a day at or above this counts as rain for "days since rain"
+# Thresholds informed by Open-Meteo daily precipitation and ERA5 soil moisture variables.
+DRY_SPELL_MM = 5.0          # cumulative rainfall under this in 10 days -> drought stress signal
+RAIN_WINDOW_MM = 15.0       # at least this in 14 days counts as a meaningful rain event
+HEAVY_RAIN_MM = 50.0        # single-day total above this -> waterlogging / runoff risk
+HEAT_C = 38.0               # daily max temperature threshold for heat-stress hypothesis
+HEAT_DAYS = 3               # consecutive days above HEAT_C needed to fire heat-stress
+HUMID_RH = 85.0             # relative humidity (%) threshold for fungal-disease hypothesis
+HUMID_DAYS = 3              # consecutive days above HUMID_RH needed to fire humid-disease
+HUMID_RAIN_MM = 20.0        # antecedent rain in 10 days before onset (supports fungal risk)
+SOIL_LOW = -0.04            # 7-day mean minus 60-day mean (m3/m3); negative = drying trend
+WINDOW_DAYS = 14            # rolling window used for most weather aggregations
+RAIN_RECENT_MM = 5.0        # daily rain at or above this counts as a rain day for "days since rain"
 
 # ---- crop calendar
 EXPECTED_DROP = -0.08
@@ -113,4 +114,6 @@ RULED_OUT_BELOW = 0.15
 OUTCOME_WEIGHT = 0.5        # how far an officer finding moves a hypothesis
 
 # ---- severity
-SEVERITY_AREA = 0.08        # share of analysis pixels affected for a "high" case
+# A case is rated "high" severity when a large share of the field's analysis pixels
+# show the anomalous pattern, indicating a widespread rather than localised problem.
+SEVERITY_AREA = 0.08        # share of analysis pixels affected for a "high" severity rating
