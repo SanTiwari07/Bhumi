@@ -37,7 +37,7 @@ AREA_MAX_KM2 = 150.0        # a bigger area means hundreds of MB of imagery per 
 AREA_MIN_KM2 = 0.05
 # Place search (OpenStreetMap Nominatim, 1 request per second, identify the app)
 NOMINATIM_URL = os.environ.get("BHUMI_NOMINATIM") or os.environ.get("FIELDDX_NOMINATIM") or "https://nominatim.openstreetmap.org/search"
-HTTP_USER_AGENT = "Bhumi/0.4 (IEEE ClimateChain dMRV observatory; https://github.com/SanTiwari07/Bhumi)"
+HTTP_USER_AGENT = "Bhumi/0.4 (crop health and field records; https://github.com/SanTiwari07/Bhumi)"
 # Fields of the World global field boundaries (2024 and 2025), GeoParquet and PMTiles per state
 FTW_GLOBAL_BASE = (
     os.environ.get("BHUMI_FTW_GLOBAL")

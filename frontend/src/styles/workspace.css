@@ -129,8 +129,7 @@
 .scenebar { display: flex; align-items: center; gap: 2px; height: 48px; padding: 0 6px; background: var(--canvas); border: 1px solid var(--border); border-radius: 9999px; box-shadow: var(--overlay); }
 .sb-arrow { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--text-2); }
 .sb-arrow:hover { background: var(--canvas-sunken); color: var(--text); }
-.sb-track { flex: 1; min-width: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 0 2px; }
-.sb-track::-webkit-scrollbar { display: none; }
+.sb-track { flex: 1; min-width: 0; display: flex; gap: 4px; overflow-x: auto; padding: 0 2px; }
 .sb-item { position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 0; border-radius: 9999px; background: none; font-size: 12px; font-weight: 600; color: var(--text-2); white-space: nowrap; transition: background var(--fast) var(--ease); }
 .sb-item i { width: 8px; height: 8px; border-radius: 50%; background: var(--q-usable); }
 .sb-item.q-partial { color: var(--q-partial); }
@@ -172,7 +171,7 @@
 .tabs button:hover { color: var(--text); }
 .tabs button.on { color: var(--ink); border-bottom-color: var(--brand); }
 .tab-count { font-size: 11px; font-weight: 700; background: var(--brand-wash); border-radius: 9999px; padding: 1px 7px; color: var(--ink); }
-.panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 28px; overscroll-behavior: contain; }
+.panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 28px; overscroll-behavior: contain; mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent); }
 .panel-body > [role="tabpanel"] > * + * { margin-top: 16px; }
 .panel-body [hidden] { display: none !important; }
 .waiting { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 16px; background: var(--canvas-subtle); border: 1px dashed var(--border-strong); border-radius: var(--r-md); color: var(--text-2); }
@@ -231,7 +230,7 @@ dialog.sheet::backdrop { background: rgba(20, 27, 45, 0.55); }
   .workspace { display: flex; flex-direction: column; overflow: visible; }
   .stage { order: 0; height: 64dvh; min-height: 420px; max-height: 580px; }
   .panel { order: 1; border-right: 0; border-top: 1px solid var(--border); }
-  .panel-body { overflow: visible; padding: 16px 16px 24px; }
+  .panel-body { overflow: visible; padding: 16px 16px 24px; mask-image: none; }
   .tabs { position: sticky; top: 52px; z-index: 1000; }
   .dock { position: sticky; bottom: 0; z-index: 1000; box-shadow: 0 -6px 18px rgba(20, 27, 45, 0.14); }
   .dock-slip .dock-results, .dock-slip .dock-cost, .dock-slip .dock-ask { display: none; }
@@ -255,8 +254,7 @@ dialog.sheet::backdrop { background: rgba(20, 27, 45, 0.55); }
 
 @media (max-width: 760px) {
   .stage { height: 50dvh; min-height: 340px; max-height: 440px; }
-  .tabs { padding: 0 4px; gap: 0; overflow-x: auto; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
+  .tabs { padding: 0 4px; gap: 0; }
   .tabs button { flex: 1 0 auto; justify-content: center; gap: 5px; padding: 12px 8px 10px; font-size: 13px; }
   .panel-body { padding: 16px 16px 20px; }
   .dock { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
@@ -337,8 +335,7 @@ dialog.sheet::backdrop { background: rgba(20, 27, 45, 0.55); }
 /* ---------- dossier tabs: shared spacing ---------- */
 .panel-body > * + * { margin-top: 16px; }
 .rail-section > * + * { margin-top: 12px; }
-.tabs { overflow-x: auto; scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
+.tabs { overflow-x: auto; }
 .tabs button { flex: none; white-space: nowrap; }
 .dock-reason { font-size: 13px; line-height: 1.45; color: var(--text-3); }
 .fm-pop-hint { font-style: italic; }
