@@ -1,0 +1,14 @@
+{
+  "name": "bhumi-contracts",
+  "private": true,
+  "description": "Compile and test BhumiClimateRegistry.sol with solc-js and an in-memory EVM (no chain, no deploy).",
+  "scripts": {
+    "test": "node --test test/BhumiClimateRegistry.test.mjs"
+  },
+  "devDependencies": {
+    "@ethereumjs/util": "9.1.0",
+    "@ethereumjs/vm": "8.1.1",
+    "ethers": "6.13.4",
+    "solc": "0.8.28"
+  }
+}

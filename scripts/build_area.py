@@ -230,7 +230,7 @@ def seasons(folder: Path, p: Progress) -> None:
     windows = []
     for drop, a, b in sorted(chosen, key=lambda c: c[1][5:]):
         ma, mb = int(a[5:]), int(b[5:])
-        name = f"{cal.month_abbr[ma]}–{cal.month_abbr[mb]}"
+        name = f"{cal.month_abbr[ma]}-{cal.month_abbr[mb]}"
         common = {
             "verified": False,
             "ask": "Ask the farmer: has the crop been harvested? One phone call settles it.",
@@ -253,7 +253,7 @@ def seasons(folder: Path, p: Progress) -> None:
         "classes": {"seasonal": {"windows": windows}, "perennial": {"windows": []}, "unknown": {"windows": []}},
     }
     (folder / "calendar.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
-    spans = [f"{cal.month_abbr[int(a[5:])]}–{cal.month_abbr[int(b[5:])]}" for _d, a, b in sorted(chosen, key=lambda c: c[1][5:])]
+    spans = [f"{cal.month_abbr[int(a[5:])]}-{cal.month_abbr[int(b[5:])]}" for _d, a, b in sorted(chosen, key=lambda c: c[1][5:])]
     p.step("seasons", state="done",
            detail=f"Harvest seen in {' and '.join(spans)} last year (inferred)" if spans
            else "No clear area-wide harvest in last year's NDVI")

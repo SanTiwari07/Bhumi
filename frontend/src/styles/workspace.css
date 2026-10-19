@@ -32,7 +32,7 @@
 .case-meta { font-size: 13.5px; color: var(--text-3); }
 .btn.is-verified { color: var(--ink); border-color: var(--sev-low-border); background: var(--brand-wash); }
 
-/* Mirrored Split: Left 480px–540px Diagnostic Dossier, Right 1fr Sticky Geospatial Raster Deck */
+/* Mirrored Split: Left 480px-540px Diagnostic Dossier, Right 1fr Sticky Geospatial Raster Deck */
 .workspace {
   flex: 1;
   min-height: 0;
