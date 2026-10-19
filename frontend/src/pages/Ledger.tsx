@@ -19,6 +19,18 @@ declare global {
   }
 }
 
+// Anchors go to a fixed address nobody holds a key for. MetaMask refuses a
+// dapp transaction that carries data to one of the wallet's own accounts.
+const ANCHOR_SINK = "0x50ee954a71e0ab03eacfcda8dfb1f98edf2952a1";
+
+// Wallets reject with plain {code, message} objects, not Error instances.
+function walletErrorMessage(err: unknown): string {
+  const e = err as { code?: number; message?: string } | null;
+  if (e?.code === 4001) return "The request was rejected in the wallet.";
+  if (e?.message) return e.message;
+  return "Could not anchor the area root. Check your wallet and try again.";
+}
+
 export default function Ledger() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [ledger, setLedger] = useState<AreaLedger | null>(null);
@@ -124,7 +136,7 @@ export default function Ledger() {
           params: [
             {
               from: wallet,
-              to: wallet,
+              to: ANCHOR_SINK,
               value: "0x0",
               data: callData,
             },
@@ -167,9 +179,7 @@ export default function Ledger() {
         );
       }
     } catch (err) {
-      setStatusMsg(
-        err instanceof Error ? err.message : "Could not anchor the area root. Check your wallet and try again.",
-      );
+      setStatusMsg(walletErrorMessage(err));
     } finally {
       setAnchoring(false);
     }
